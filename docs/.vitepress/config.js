@@ -1,5 +1,5 @@
 export default {
-  base: '/bright-hope/', 
+  base: '/', 
   title: 'Bright Hope Organization',
   description: 'Supporting communities in need',
   themeConfig: {
