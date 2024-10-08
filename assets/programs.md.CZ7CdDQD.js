@@ -1,0 +1,1 @@
+import{_ as e,c as r,o as t}from"./chunks/framework.BNHFgoGA.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"programs.md","filePath":"programs.md"}'),a={name:"programs.md"};function o(s,c,n,p,m,_){return t(),r("div")}const f=e(a,[["render",o]]);export{i as __pageData,f as default};
