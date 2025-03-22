@@ -34,13 +34,13 @@ export default function DashboardPage() {
         const { data: donations, error: donationsError } = await supabaseService.supabase
           .from('donations')
           .select('*')
-          .eq('donor_email', user.email)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(5);
 
         if (donationsError) {
-          console.error('Error fetching donations:', donationsError);
-          throw donationsError;
+          console.error('Error fetching donations:', JSON.stringify(donationsError));
+          throw new Error(`Failed to fetch donations: ${donationsError.message}`);
         }
 
         console.log('Fetching volunteer work for user:', user.email);
@@ -48,13 +48,13 @@ export default function DashboardPage() {
         const { data: volunteerWork, error: volunteerError } = await supabaseService.supabase
           .from('volunteers')
           .select('*')
-          .eq('email', user.email)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(5);
 
         if (volunteerError) {
-          console.error('Error fetching volunteer work:', volunteerError);
-          throw volunteerError;
+          console.error('Error fetching volunteer work:', JSON.stringify(volunteerError));
+          throw new Error(`Failed to fetch volunteer work: ${volunteerError.message}`);
         }
 
         // Calculate total donations
