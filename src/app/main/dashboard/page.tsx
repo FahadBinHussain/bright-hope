@@ -241,7 +241,7 @@ export default function DashboardPage() {
                 {stats.recentVolunteerWork.map((work) => (
                   <div key={work.id} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">{work.name}</p>
+                      <p className="font-medium">{work.role}</p>
                       <p className="text-sm text-gray-600">
                         {format(new Date(work.created_at), 'MMM d, yyyy')}
                       </p>

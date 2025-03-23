@@ -59,10 +59,11 @@ export interface Donation {
 
 export interface Volunteer {
   id: string
-  name: string
-  email: string
-  phone: string
   created_at: string
+  user_id: string
+  campaign_id: string
+  role: string
+  status: 'pending' | 'approved' | 'rejected'
 }
 
 export interface ImpactStat {
