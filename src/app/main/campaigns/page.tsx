@@ -9,37 +9,65 @@ import { Input } from "@/components/ui/input";
 import { Suspense, useState } from "react";
 
 // Image components with event handlers need to be Client Components
-function CampaignImage({ src, alt }: { src: string; alt: string }) {
+const CampaignImage = ({ src, alt }: { src: string; alt: string }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   
+  // Determine image path - if it already starts with slash, use it directly
+  // Otherwise, assume it's a filename and add the path prefix
+  const imagePath = src.startsWith('/') 
+    ? src 
+    : `/images/campaigns/${src}`;
+
   return (
-    <div className="relative h-48 bg-gray-200">
-      {(isLoading || hasError) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-          {hasError ? 
-            <p className="text-gray-500">Image not available</p> :
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          }
+    <div className="relative w-full h-48 overflow-hidden rounded-t-lg bg-gray-600">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
-      <Image
-        src={hasError ? "/images/placeholder.svg" : src}
-        alt={alt}
-        fill
-        className={`object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-        loading="lazy" 
-        onLoadingComplete={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false);
-          setHasError(true);
-        }}
-      />
+      
+      {hasError ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-10 h-10 mb-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p className="text-sm">Image not available</p>
+        </div>
+      ) : (
+        <Image
+          src={imagePath}
+          alt={alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className={`object-cover transition-opacity duration-500 ${
+            isLoading ? 'opacity-0' : 'opacity-100'
+          }`}
+          quality={80}
+          onLoad={() => setIsLoading(false)}
+          onError={(e) => {
+            console.error(`Failed to load image: ${imagePath}`, e);
+            setIsLoading(false);
+            setHasError(true);
+          }}
+        />
+      )}
     </div>
   );
-}
+};
 
-// Reduced static campaign data - using local images instead of remote Unsplash URLs
+// Reduced static campaign data - using just the filenames
 const campaigns = [
   {
     id: "1",
@@ -47,7 +75,7 @@ const campaigns = [
     title: "Clean Water Initiative",
     description:
       "Help us provide clean water to communities in need. Your donation can save lives and improve health outcomes for thousands of people.",
-    image: "/images/placeholder.svg",
+    image: "water.jpg",
     category: "Health",
     goal: 50000,
     raised: 32500,
@@ -59,7 +87,7 @@ const campaigns = [
     title: "Education for All",
     description:
       "Support our mission to bring quality education to underprivileged children around the world. Education is the key to breaking the cycle of poverty.",
-    image: "/images/placeholder.svg",
+    image: "education.jpg",
     category: "Education",
     goal: 75000,
     raised: 45000,
@@ -71,7 +99,7 @@ const campaigns = [
     title: "Healthcare Access",
     description:
       "Join us in providing essential healthcare services to remote communities. We&apos;re building clinics and training local healthcare workers.",
-    image: "/images/placeholder.svg",
+    image: "healthcare.jpg",
     category: "Health",
     goal: 100000,
     raised: 68000,
@@ -83,7 +111,7 @@ const campaigns = [
     title: "Sustainable Agriculture",
     description:
       "Help farmers in developing regions implement sustainable farming practices that increase yields while protecting the environment.",
-    image: "/images/placeholder.svg",
+    image: "agriculture.jpg",
     category: "Environment",
     goal: 60000,
     raised: 28000,
@@ -95,7 +123,7 @@ const campaigns = [
     title: "Women&apos;s Empowerment",
     description:
       "Support programs that provide women with skills training, microloans, and resources to start businesses and achieve financial independence.",
-    image: "/images/placeholder.svg",
+    image: "women.jpg",
     category: "Social Justice",
     goal: 80000,
     raised: 52000,
@@ -107,7 +135,7 @@ const campaigns = [
     title: "Disaster Relief Fund",
     description:
       "Help us respond quickly to natural disasters with emergency supplies, shelter, and support for affected communities.",
-    image: "/images/placeholder.svg",
+    image: "disaster.jpg",
     category: "Emergency",
     goal: 120000,
     raised: 95000,
