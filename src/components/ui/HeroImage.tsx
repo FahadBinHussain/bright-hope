@@ -15,7 +15,7 @@ export default function HeroImage({
   src, 
   alt, 
   height = "h-[400px]", 
-  fallbackSrc = "/images/placeholder-hero.jpg",
+  fallbackSrc = "/images/hero/home-hero.jpg",
   children 
 }: HeroImageProps) {
   const [isLoading, setIsLoading] = useState(true);
