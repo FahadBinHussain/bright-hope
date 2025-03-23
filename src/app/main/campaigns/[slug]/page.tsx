@@ -1,39 +1,68 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Suspense, useState } from "react";
+import MainLayout from "@/components/layout/MainLayout";
 
-// Temporary data for the campaign
+// Image component with error handling
+function CampaignHeroImage({ src, alt }: { src: string; alt: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  
+  return (
+    <div className="relative h-[400px] w-full bg-gray-700">
+      {(isLoading || hasError) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-700">
+          {hasError ? 
+            <p className="text-gray-300">Image not available</p> :
+            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          }
+        </div>
+      )}
+      <Image
+        src={hasError ? "/images/placeholder.svg" : src}
+        alt={alt}
+        fill
+        className={`object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        loading="lazy"
+        onLoadingComplete={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setHasError(true);
+        }}
+      />
+    </div>
+  );
+}
+
+// Temporary data for the campaign - using placeholder image
 const campaign = {
   id: "1",
   slug: "clean-water-initiative",
   title: "Clean Water Initiative",
   description:
     "Help us provide clean water to communities in need. Your donation can save lives.",
-  image: "/images/campaigns/water.jpg",
+  image: "/images/placeholder.svg",
   goal: 50000,
   raised: 32500,
   daysLeft: 15,
   story: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
   `,
 };
 
 export default function CampaignPage() {
   return (
-    <div>
+    <MainLayout>
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white">
-        <div className="relative h-[400px] w-full">
-          <Image
-            src={campaign.image}
-            alt={campaign.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        <Suspense fallback={<div className="h-[400px] w-full bg-gray-700 animate-pulse"></div>}>
+          <CampaignHeroImage src={campaign.image} alt={campaign.title} />
+        </Suspense>
         <div className="absolute inset-0 bg-black/50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
             <div className="max-w-3xl">
@@ -94,6 +123,6 @@ export default function CampaignPage() {
           </div>
         </div>
       </section>
-    </div>
+    </MainLayout>
   );
 } 
