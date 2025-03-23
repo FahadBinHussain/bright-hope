@@ -160,8 +160,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const { slug } = params;
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const slug = params.slug;
   const campaign = campaignData[slug] || campaignData["clean-water-initiative"];
   
   return {
@@ -170,8 +171,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function CampaignDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function CampaignDetailPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  const slug = params.slug;
   
   // Get campaign data based on slug or show a fallback if not found
   const campaign = campaignData[slug] || campaignData["clean-water-initiative"];
