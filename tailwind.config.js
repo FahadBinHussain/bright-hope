@@ -26,7 +26,7 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#206E97",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -54,6 +54,64 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100%',
+            color: 'var(--tw-prose-body)',
+            lineHeight: '1.75',
+            p: {
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
+              lineHeight: '1.75',
+            },
+            h1: {
+              marginTop: '0',
+              marginBottom: '1.5em',
+              lineHeight: '1.3',
+            },
+            h2: {
+              marginTop: '2.5em',
+              marginBottom: '1.25em',
+              lineHeight: '1.3',
+            },
+            h3: {
+              marginTop: '2.5em',
+              marginBottom: '1.25em',
+              lineHeight: '1.3',
+              fontWeight: '700',
+            },
+            'h4, h5, h6': {
+              marginTop: '2em',
+              marginBottom: '1em',
+              lineHeight: '1.3',
+            },
+            'ul, ol': {
+              paddingLeft: '1.5em',
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
+            },
+            'li': {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            '> div > p:first-of-type': {
+              fontSize: '1.125em',
+              marginTop: '0.75em',
+            },
+            blockquote: {
+              fontWeight: '500',
+              fontStyle: 'italic',
+              color: 'var(--tw-prose-quotes)',
+              borderLeftWidth: '0.25rem',
+              borderLeftColor: 'var(--tw-prose-quote-borders)',
+              paddingLeft: '1em',
+              marginTop: '2em',
+              marginBottom: '2em',
+            },
+          },
+        },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -68,12 +126,44 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)"
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)"
+          },
+        },
+        "fade-in": {
+          "0%": {
+            opacity: "0"
+          },
+          "100%": {
+            opacity: "1"
+          },
+        },
+        "subtle-zoom": {
+          "0%": {
+            transform: "scale(1.1)"
+          },
+          "100%": {
+            transform: "scale(1)"
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fade-in-up 0.7s ease-out forwards",
+        "fade-in": "fade-in 0.7s ease-out forwards",
+        "subtle-zoom": "subtle-zoom 20s ease-out forwards",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require('@tailwindcss/typography'),
+  ],
 } 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Heart, Users, Globe, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabaseService } from "@/lib/services/supabase";
+import FallbackImage from "@/components/ui/fallback-image";
 
 const stats = [
   {
@@ -31,18 +32,23 @@ const stats = [
 
 const team = [
   {
-    name: "Sarah Johnson",
-    role: "Founder & CEO",
+    name: "Mahir Abdullah",
+    role: "Executive Director",
     imagePath: "team/sarah.jpg",
   },
   {
-    name: "Michael Chen",
-    role: "Program Director",
+    name: "Fahad Bin Hussain",
+    role: "Lead Developer",
     imagePath: "team/michael.jpg",
   },
   {
-    name: "Emma Rodriguez",
-    role: "Community Manager",
+    name: "Abrar Fahim",
+    role: "Finance Director",
+    imagePath: "team/emma.jpg",
+  },
+  {
+    name: "Asibur Rahman Rakib",
+    role: "Communications Manager",
     imagePath: "team/emma.jpg",
   },
 ];
@@ -216,11 +222,12 @@ export default function AboutPage() {
               <div key={member.name} className="text-center">
                 <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
                   {images[member.imagePath] ? (
-                    <Image
+                    <FallbackImage
                       src={images[member.imagePath]}
                       alt={member.name}
                       fill
                       className="object-cover"
+                      fallbackText={member.name}
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">

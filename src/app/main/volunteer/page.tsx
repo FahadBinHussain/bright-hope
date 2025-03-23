@@ -28,43 +28,43 @@ import Image from "next/image";
 const volunteerOpportunities = [
   {
     id: "1",
-    title: "Community Outreach Volunteer",
+    title: "Flood Relief Volunteer",
     description:
-      "Help us connect with local communities to raise awareness about our programs and services.",
-    image: "/images/volunteer/outreach.jpg",
-    location: "Various Locations",
+      "Help us reach and support communities affected by seasonal flooding in Bangladesh's low-lying areas. Assist with relief distribution and community needs assessment.",
+    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    location: "Sylhet and Sunamganj Districts",
     commitment: "4-6 hours per week",
-    skills: ["Communication", "Interpersonal", "Organization"],
+    skills: ["Communication", "Teamwork", "Physical Stamina"],
   },
   {
     id: "2",
-    title: "Event Coordinator",
+    title: "Educational Workshop Facilitator",
     description:
-      "Assist in planning and executing fundraising events, awareness campaigns, and community gatherings.",
-    image: "/images/volunteer/event.jpg",
-    location: "Main Office + Remote",
+      "Assist in conducting educational workshops for children in rural areas, focusing on basic literacy, digital skills, and environmental awareness.",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    location: "Rangpur and Rajshahi Divisions",
     commitment: "8-10 hours per month",
-    skills: ["Event Planning", "Leadership", "Time Management"],
+    skills: ["Teaching", "Patience", "Creativity"],
   },
   {
     id: "3",
-    title: "Digital Marketing Assistant",
+    title: "Social Media Ambassador",
     description:
-      "Help manage our social media presence, create content, and engage with our online community.",
-    image: "/images/volunteer/digital.jpg",
-    location: "Remote",
+      "Help manage our social media presence in Bangla and English, create content, and engage with our online community to raise awareness about our initiatives.",
+    image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1464&q=80",
+    location: "Remote (Work from anywhere in Bangladesh)",
     commitment: "3-5 hours per week",
-    skills: ["Social Media", "Content Creation", "Digital Marketing"],
+    skills: ["Social Media", "Content Creation", "Bilingual Communication"],
   },
   {
     id: "4",
-    title: "Program Support Volunteer",
+    title: "Climate Resilience Program Support",
     description:
-      "Provide direct support to our program staff in delivering services to communities in need.",
-    image: "/images/volunteer/program.jpg",
-    location: "Various Program Sites",
+      "Provide direct support to our program staff in coastal areas, helping communities adapt to climate change through sustainable agriculture and disaster preparedness.",
+    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1513&q=80",
+    location: "Khulna and Barisal Divisions",
     commitment: "6-8 hours per week",
-    skills: ["Adaptability", "Teamwork", "Problem Solving"],
+    skills: ["Environmental Knowledge", "Adaptability", "Problem Solving"],
   },
 ];
 
@@ -120,7 +120,7 @@ export default function VolunteerPage() {
       <section className="relative bg-gray-900 text-white">
         <div className="relative h-[400px] w-full">
           <Image
-            src="/images/hero/volunteer-hero.jpg"
+            src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
             alt="Volunteer with us"
             fill
             className="object-cover"
@@ -133,8 +133,9 @@ export default function VolunteerPage() {
                 Volunteer With Us
               </h1>
               <p className="text-xl text-gray-300">
-                Make a difference in your community and around the world. Join our
-                team of dedicated volunteers and help us create lasting change.
+                Make a difference in communities across Bangladesh. Join our
+                team of dedicated volunteers and help us create lasting positive change
+                from the coastal regions to the northern districts.
               </p>
             </div>
           </div>
@@ -148,7 +149,7 @@ export default function VolunteerPage() {
             <h2 className="text-3xl font-bold mb-4">Why Volunteer With Us?</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Volunteering with Bright Hope offers a meaningful way to give back
-              and make a tangible impact in communities that need it most.
+              and make a tangible impact in Bangladeshi communities that need it most.
             </p>
           </div>
 
@@ -157,10 +158,10 @@ export default function VolunteerPage() {
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Join a Community</h3>
+              <h3 className="text-xl font-bold mb-2">Join a Bangladeshi Community</h3>
               <p className="text-gray-600">
-                Connect with like-minded individuals who share your passion for
-                making a difference.
+                Connect with like-minded Bangladeshi individuals who share your passion for
+                making a difference in local communities.
               </p>
             </div>
 
@@ -170,8 +171,8 @@ export default function VolunteerPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Flexible Opportunities</h3>
               <p className="text-gray-600">
-                Find volunteer roles that fit your schedule, skills, and
-                interests.
+                Find volunteer roles across Bangladesh that fit your schedule, skills, and
+                interests - from Dhaka to remote areas.
               </p>
             </div>
 
@@ -179,10 +180,10 @@ export default function VolunteerPage() {
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <ArrowRight className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Make an Impact</h3>
+              <h3 className="text-xl font-bold mb-2">Make a Local Impact</h3>
               <p className="text-gray-600">
-                See the direct results of your contributions in the communities
-                we serve.
+                See the direct results of your contributions in communities
+                throughout Bangladesh, from urban centers to rural villages.
               </p>
             </div>
           </div>
@@ -206,16 +207,17 @@ export default function VolunteerPage() {
                 key={opportunity.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row"
               >
-                <div className="relative h-48 md:h-auto md:w-1/3">
+                <div className="relative h-60 md:h-auto md:w-2/5 flex-shrink-0">
                   <Image
                     src={opportunity.image}
                     alt={opportunity.title}
-                    width={400}
-                    height={300}
-                    className="object-cover"
+                    fill
+                    className="object-cover w-full h-full"
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    priority
                   />
                 </div>
-                <div className="p-6 md:w-2/3">
+                <div className="p-6 md:w-3/5">
                   <h3 className="text-xl font-bold mb-2">{opportunity.title}</h3>
                   <p className="text-gray-600 mb-4">{opportunity.description}</p>
                   
@@ -413,12 +415,19 @@ export default function VolunteerPage() {
               <p className="italic mb-4">
                 "Volunteering with Bright Hope has been one of the most
                 rewarding experiences of my life. I've met amazing people and
-                seen firsthand the difference we're making."
+                seen firsthand how we're transforming lives in flood-affected communities of Sylhet."
               </p>
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
+                  <Image 
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"
+                    alt="Tanvir Rahman"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div>
-                  <h4 className="font-semibold">Sarah Johnson</h4>
+                  <h4 className="font-semibold">Tanvir Rahman</h4>
                   <p className="text-sm text-gray-400">Community Outreach</p>
                 </div>
               </div>
@@ -426,14 +435,21 @@ export default function VolunteerPage() {
 
             <div className="bg-gray-800 p-6 rounded-lg">
               <p className="italic mb-4">
-                "I started volunteering to give back, but I've gained so much
-                more than I've given. The skills I've developed and the
-                connections I've made are invaluable."
+                "I started volunteering to give back to my community in Dhaka.
+                The skills I've developed and the connections I've made with rural
+                communities across Bangladesh are invaluable."
               </p>
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
+                  <Image 
+                    src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
+                    alt="Sharmin Akter"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div>
-                  <h4 className="font-semibold">Michael Chen</h4>
+                  <h4 className="font-semibold">Sharmin Akter</h4>
                   <p className="text-sm text-gray-400">Event Coordinator</p>
                 </div>
               </div>
@@ -442,13 +458,20 @@ export default function VolunteerPage() {
             <div className="bg-gray-800 p-6 rounded-lg">
               <p className="italic mb-4">
                 "As a digital marketing volunteer, I've been able to use my
-                professional skills to amplify the organization's message and
-                reach more people who want to help."
+                professional skills to amplify Bright Hope's message across Bangladesh and
+                help raise awareness about the challenges facing our coastal communities."
               </p>
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-600 rounded-full mr-3"></div>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
+                  <Image 
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"
+                    alt="Farhan Kabir"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div>
-                  <h4 className="font-semibold">Aisha Patel</h4>
+                  <h4 className="font-semibold">Farhan Kabir</h4>
                   <p className="text-sm text-gray-400">Digital Marketing</p>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Heart, Users, Globe, Home, Backpack, Leaf } from "lucide-react";
 import Image from "next/image";
+import FallbackImage from "@/components/ui/fallback-image";
 
 export default function ImpactPage() {
   useEffect(() => {
@@ -18,12 +19,12 @@ export default function ImpactPage() {
     },
     {
       icon: <Globe className="h-8 w-8 text-primary" />,
-      value: "35",
-      label: "Countries Reached",
+      value: "64",
+      label: "Districts Reached",
     },
     {
       icon: <Heart className="h-8 w-8 text-primary" />,
-      value: "$5.2M",
+      value: "৳4.2Cr+",
       label: "Donations Raised",
     },
     {
@@ -36,27 +37,27 @@ export default function ImpactPage() {
   const impactStories = [
     {
       title: "Clean Water Initiative",
-      location: "Rural Kenya",
-      description: "Our team installed water filtration systems in 12 villages, providing clean drinking water to over 5,000 people. This initiative has reduced waterborne illnesses by 80% in the region.",
-      image: "/images/impact/water.jpg",
+      location: "Sunamganj, Sylhet",
+      description: "Our team installed water filtration systems in 12 villages affected by frequent flooding, providing clean drinking water to over 5,000 people. This initiative has reduced waterborne illnesses by 80% in the region.",
+      image: "https://images.unsplash.com/photo-1563073362-28580517760e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     },
     {
       title: "Education for All",
-      location: "Guatemala",
-      description: "We built 3 new schools and provided educational materials to 8 existing schools, giving over 2,500 children access to quality education. Literacy rates have improved by 45% since the program began.",
-      image: "/images/impact/education.jpg",
+      location: "Kurigram, Rangpur",
+      description: "We built 3 new schools and provided educational materials to 8 existing schools in northern Bangladesh, giving over 2,500 children access to quality education. Literacy rates have improved by 45% since the program began.",
+      image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1473&q=80",
     },
     {
       title: "Healthcare Access",
-      location: "Bangladesh",
-      description: "Our mobile health clinics have provided medical care to 15,000 people in remote areas. We've also trained 50 local healthcare workers to ensure sustainable healthcare delivery.",
-      image: "/images/impact/healthcare.jpg",
+      location: "Chars of Brahmaputra, Jamalpur",
+      description: "Our mobile health clinics have provided medical care to 15,000 people in remote char areas. We've also trained 50 local healthcare workers to ensure sustainable healthcare delivery in these isolated communities.",
+      image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
     },
     {
       title: "Sustainable Farming",
-      location: "Nepal",
-      description: "We've helped 400 farming families adopt sustainable agriculture practices, increasing crop yields by 60% while reducing environmental impact and enhancing food security in the region.",
-      image: "/images/impact/farming.jpg",
+      location: "Coastal Areas, Khulna",
+      description: "We've helped 400 farming families in saline-affected coastal areas adopt climate-resilient agriculture practices, increasing crop yields by 60% while ensuring food security in the region.",
+      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     },
   ];
 
@@ -115,24 +116,14 @@ export default function ImpactPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {impactStories.map((story) => (
               <div key={story.title} className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="relative h-64 w-full">
-                  <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">{story.title}</span>
-                  </div>
-                  {/* Fallback for missing images */}
-                  {story.image && (
-                    <Image 
-                      src={story.image} 
-                      alt={story.title} 
-                      fill 
-                      className="object-cover"
-                      onError={(e) => {
-                        // Hide the image on error
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
-                    />
-                  )}
+                <div className="relative h-72 rounded-t-lg overflow-hidden">
+                  <FallbackImage
+                    src={story.image}
+                    alt={story.title}
+                    fill
+                    className="object-cover"
+                    fallbackText={story.title}
+                  />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-2">
