@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import Image from "next/image";
 import { Facebook, Twitter, Linkedin } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Mail } from "lucide-react";
+import FallbackImage from "@/components/ui/fallback-image";
 
 export default function TeamPage() {
   useEffect(() => {
@@ -15,7 +19,7 @@ export default function TeamPage() {
       name: "Mahir Abdullah",
       role: "Executive Director",
       bio: "Mahir leads our organization with passion and strategic vision. With extensive experience in nonprofit management, he ensures that Bright Hope continues to create meaningful impact in communities around the world.",
-      image: "/images/team/sarah.jpg",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
       social: {
         linkedin: "https://linkedin.com/in/mahirabdullah",
         twitter: "https://twitter.com/mahirabdullah",
@@ -25,7 +29,7 @@ export default function TeamPage() {
       name: "Fahad Bin Hussain",
       role: "Lead Developer",
       bio: "Fahad is the lead developer of Bright Hope, overseeing the technical architecture and implementation of our digital platform. His expertise in software engineering ensures our online presence effectively supports our mission and community initiatives.",
-      image: "/images/team/michael.jpg",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
       social: {
         github: "https://github.com/FahadBinHussain",
         facebook: "https://facebook.com/FahadBinHussainn",
@@ -36,7 +40,7 @@ export default function TeamPage() {
       name: "Abrar Fahim",
       role: "Finance Director",
       bio: "Abrar manages our organization's finances with precision and integrity. His expertise ensures that donations are used effectively and transparently to maximize our impact in communities we serve.",
-      image: "/images/team/amara.jpg",
+      image: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
       social: {
         linkedin: "https://linkedin.com/in/abrarfahim",
       },
@@ -45,7 +49,7 @@ export default function TeamPage() {
       name: "Asibur Rahman Rakib",
       role: "Communications Manager",
       bio: "Asibur leads our communications and outreach efforts. His creative approach and strategic thinking help share our story and amplify our message to supporters and communities worldwide.",
-      image: "/images/team/james.jpg",
+      image: "https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
       social: {
         twitter: "https://twitter.com/asiburrrahman",
         facebook: "https://facebook.com/asiburrahman",
@@ -59,31 +63,21 @@ export default function TeamPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Our Team</h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Meet the dedicated professionals who lead Bright Hope's mission to create positive change in communities around the world.
+            Meet the dedicated professionals who lead Bright Hope&apos;s mission to create positive change in communities around the world.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {teamMembers.map((member) => (
             <div key={member.name} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative h-64 w-full">
-                <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">{member.name}</span>
-                </div>
-                {/* Fallback for missing images */}
-                {member.image && (
-                  <Image 
-                    src={member.image} 
-                    alt={member.name} 
-                    fill 
-                    className="object-cover"
-                    onError={(e) => {
-                      // Hide the image on error
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                )}
+              <div className="relative h-72 md:h-96">
+                <FallbackImage
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  fallbackText={member.name}
+                />
               </div>
               <div className="p-6">
                 <h2 className="text-xl font-bold">{member.name}</h2>
@@ -162,7 +156,7 @@ export default function TeamPage() {
         <div className="mt-16 bg-gray-50 rounded-lg p-8 max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold mb-4 text-center">Join Our Team</h2>
           <p className="text-gray-600 mb-6 text-center">
-            We're always looking for passionate individuals to join our mission. Check our current openings or send us your resume.
+            We&apos;re always looking for passionate individuals to join our mission. Check our current openings or send us your resume.
           </p>
           <div className="flex justify-center">
             <a 
