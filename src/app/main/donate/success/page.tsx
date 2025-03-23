@@ -20,7 +20,7 @@ export default function DonationSuccessPage() {
       navigator
         .share({
           title: "I just donated to Bright Hope!",
-          text: "I just made a donation to help Bright Hope's mission. Join me in making a difference!",
+          text: "I just made a donation to help Bright Hope&apos;s mission. Join me in making a difference!",
           url: window.location.origin,
         })
         .then(() => console.log("Shared successfully"))
@@ -68,8 +68,8 @@ export default function DonationSuccessPage() {
                 <li className="flex items-start">
                   <span className="flex-shrink-0 h-6 w-6 text-green-500 mr-2">✓</span>
                   <span>
-                    You'll receive a confirmation email with details of your
-                    donation.
+                    You&apos;ll receive a confirmation email with details of your
+                    donation for your records.
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -82,7 +82,7 @@ export default function DonationSuccessPage() {
                 <li className="flex items-start">
                   <span className="flex-shrink-0 h-6 w-6 text-green-500 mr-2">✓</span>
                   <span>
-                    You'll receive updates about the impact of your contribution.
+                    You&apos;ll receive updates about the impact of your contribution.
                   </span>
                 </li>
               </ul>

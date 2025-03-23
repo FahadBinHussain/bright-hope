@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Calendar, Clock, ArrowLeft, Share2, Bookmark, ThumbsUp, MessageCircle, Star } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, Share2, Bookmark, ThumbsUp, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import MainLayout from "@/components/layout/MainLayout";
 
@@ -19,12 +19,12 @@ const post = {
     <h2>Breaking Barriers to Education in Rural Bangladesh</h2>
     <p>In the remote village of Nilphamari in northern Bangladesh, 14-year-old Aisha used to walk three hours each way to attend the nearest secondary school. During monsoon season, when roads often flooded, she would miss weeks of classes. Her story is not unique – across rural Bangladesh, geographic isolation, economic pressures, and social barriers prevent millions of children, especially girls, from completing their education.</p>
     
-    <p>When Bright Hope established its Education Outreach Program in Nilphamari district in 2020, we didn't start by building schools. Instead, we began by listening to community members like Aisha and her family about the specific barriers they faced.</p>
+    <p>When Bright Hope established its Education Outreach Program in Nilphamari district in 2020, we didn&apos;t start by building schools. Instead, we began by listening to community members like Aisha and her family about the specific barriers they faced.</p>
     
     <h2>Beyond Access: Quality and Relevance</h2>
     <p>The challenges extended beyond physical access. Many parents questioned the value of education when the curriculum seemed disconnected from local economic opportunities. Teachers struggled with large class sizes and limited resources. And students who did manage to attend school regularly often found themselves memorizing facts rather than developing critical thinking skills.</p>
     
-    <p>"We realized that simply focusing on enrollment numbers wouldn't address the deeper issues," explains Tanvir Ahmed, our Education Program Director. "We needed to improve the quality and relevance of education while making it more accessible."</p>
+    <p>"We realized that simply focusing on enrollment numbers wouldn&apos;t address the deeper issues," explains Tanvir Ahmed, our Education Program Director. "We needed to improve the quality and relevance of education while making it more accessible."</p>
     
     <h2>Community Learning Hubs: A New Approach</h2>
     <p>Rather than duplicating the traditional school model, Bright Hope developed Community Learning Hubs – flexible spaces that serve multiple educational functions. Located within villages, these hubs eliminate long commutes and provide safe spaces for learning during all seasons.</p>
@@ -41,22 +41,22 @@ const post = {
     <h2>Teacher Training and Curriculum Development</h2>
     <p>Recognizing that educational quality depends heavily on teachers, we invested in comprehensive teacher training programs. Local educators receive ongoing professional development in student-centered learning approaches, digital literacy, and inclusive education practices.</p>
     
-    <p>In partnership with education experts and community members, we've also developed supplementary learning materials that connect national curriculum requirements with local contexts. Mathematics is taught through examples relevant to local agriculture and small businesses. Science lessons incorporate local environmental challenges and solutions.</p>
+    <p>In partnership with education experts and community members, we&apos;ve also developed supplementary learning materials that connect national curriculum requirements with local contexts. Mathematics is taught through examples relevant to local agriculture and small businesses. Science lessons incorporate local environmental challenges and solutions.</p>
     
     <h2>Measuring Impact: Beyond Enrollment</h2>
     <p>Three years into the program, the results are promising:</p>
     <ul>
       <li>School attendance has increased by 78% among participating communities</li>
-      <li>Girls' secondary school completion rates have improved from 36% to 67%</li>
+      <li>Girls&apos; secondary school completion rates have improved from 36% to 67%</li>
       <li>Standardized test scores in core subjects have improved by an average of 42%</li>
-      <li>87% of parents report greater satisfaction with their children's education</li>
+      <li>87% of parents report greater satisfaction with their children&apos;s education</li>
       <li>Youth unemployment in communities with vocational training has decreased by 23%</li>
     </ul>
     
-    <h2>Aisha's Story Continues</h2>
+    <h2>Aisha&apos;s Story Continues</h2>
     <p>Today, Aisha attends the Community Learning Hub in her village each morning for two hours of supplementary lessons. She then walks 30 minutes to a newly established satellite secondary school – a partnership between Bright Hope, the local government, and community members.</p>
     
-    <p>"I used to be so tired from walking that I couldn't focus in class," she says. "Now I have energy to participate. I'm learning computer skills too, and I want to study information technology after I graduate."</p>
+    <p>"I used to be so tired from walking that I couldn&apos;t focus in class," she says. "Now I have energy to participate. I&apos;m learning computer skills too, and I want to study information technology after I graduate."</p>
     
     <p>Her mother, previously skeptical about the value of education beyond basic literacy, has enrolled in evening classes herself. "I see how education is changing, becoming more useful for our lives," she explains. "I want to be able to help my daughter with her studies and maybe start a small business using what I learn."</p>
     
@@ -65,7 +65,7 @@ const post = {
     
     <p>The program now operates in 12 communities across three districts, with plans to expand to 25 communities by 2025. Local governments have begun adopting elements of the model, particularly the teacher training components and the approach to making curriculum locally relevant.</p>
     
-    <p>"Education is not just about transferring information," says Ahmed. "It's about empowering communities to identify and solve their own challenges. When education connects to real life and creates tangible opportunities, it transforms not just individual lives but entire communities."</p>
+    <p>"Education is not just about transferring information," says Ahmed. "It&apos;s about empowering communities to identify and solve their own challenges. When education connects to real life and creates tangible opportunities, it transforms not just individual lives but entire communities."</p>
   `
 };
 
@@ -129,7 +129,7 @@ export default function BlogPostPage() {
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md">
                   <Image
                     src={post.author.image}
-                    alt={`${post.author.name}'s profile picture`}
+                    alt={`${post.author.name}&apos;s profile picture`}
                     fill
                     className="w-full h-full object-cover"
                   />
@@ -195,7 +195,7 @@ export default function BlogPostPage() {
                   </svg>
                 </div>
                 <blockquote className="text-xl italic text-gray-700 relative z-10">
-                  Education is not just about transferring information. It's about empowering communities to identify and solve their own challenges.
+                  Education is not just about transferring information. It&apos;s about empowering communities to identify and solve their own challenges.
                 </blockquote>
                 <cite className="block mt-4 text-right text-gray-600 font-semibold">— Tanvir Ahmed, Education Program Director</cite>
               </div>
@@ -208,7 +208,7 @@ export default function BlogPostPage() {
                 </div>
                 <div className="bg-green-100 p-4 rounded-lg text-center">
                   <div className="text-3xl font-bold text-green-600">67%</div>
-                  <div className="text-sm text-gray-600">Girls' Completion Rate</div>
+                  <div className="text-sm text-gray-600">Girls&apos; Completion Rate</div>
                 </div>
                 <div className="bg-blue-100 p-4 rounded-lg text-center">
                   <div className="text-3xl font-bold text-blue-600">42%</div>

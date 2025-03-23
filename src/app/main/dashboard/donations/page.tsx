@@ -44,8 +44,8 @@ export default function DonationsPage() {
         {loading ? (
           <div className="text-center py-8">Loading...</div>
         ) : donations.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-600">You haven't made any donations yet.</p>
+          <div className="text-center p-8">
+            <p className="text-gray-600">You haven&apos;t made any donations yet.</p>
             <a
               href="/main/donate"
               className="text-primary hover:underline mt-2 inline-block"

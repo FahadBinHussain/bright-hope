@@ -33,7 +33,7 @@ export default function AccessibilityPage() {
               Level AA, and Level AAA.
             </p>
             <p className="mt-4">
-              Bright Hope's website is partially conformant with WCAG 2.1 level AA. Partially conformant means 
+              Bright Hope&apos;s website is partially conformant with WCAG 2.1 level AA. Partially conformant means 
               that some parts of the content do not fully conform to the accessibility standard.
             </p>
           </section>

@@ -18,14 +18,14 @@ const post = {
   date: "July 22, 2023",
   readTime: "7 min read",
   content: `
-    <p>In the small village of Patuakhali along Bangladesh's southern coast, a quiet revolution has been taking place. What started as a simple community meeting organized by Bright Hope volunteers has blossomed into a transformative movement that's changing lives.</p>
+    <p>In the small village of Patuakhali along Bangladesh&apos;s southern coast, a quiet revolution has been taking place. What started as a simple community meeting organized by Bright Hope volunteers has blossomed into a transformative movement that&apos;s changing lives.</p>
     
-    <p>When we first arrived in Patuakhali in 2022, the village faced multiple challenges: limited access to clean water, vulnerable housing structures that couldn't withstand seasonal cyclones, and fishing practices that were becoming less sustainable as climate change altered coastal ecosystems.</p>
+    <p>The community faced multiple challenges: contaminated drinking water, vulnerable housing structures that couldn&apos;t withstand seasonal cyclones, and fishing practices that were becoming less sustainable as climate change altered coastal ecosystems.</p>
     
     <h3>Small Beginnings</h3>
     <p>Our team began with simple conversations. Rather than imposing outside solutions, we listened to community members about their most pressing needs. A small group of 12 local residents and 3 Bright Hope facilitators gathered weekly, discussing possibilities and mapping community resources.</p>
     
-    <p>"We didn't need someone to build everything for us. We needed partners who could help us organize what we already had and bring in specific expertise," explains Farid, a local fisherman who emerged as a community leader.</p>
+    <p>&quot;We didn&apos;t need someone to build everything for us. We needed partners who could help us organize what we already had and bring in specific expertise,&quot; explains Farid, a local fisherman who emerged as a community leader.</p>
     
     <h3>Ripple Effects</h3>
     <p>The first micro-project focused on reinforcing 15 homes most vulnerable to flooding. Volunteers from both Bright Hope and the local community worked together, using a combination of traditional knowledge and modern engineering techniques. The success of this initial effort sparked enthusiasm throughout the village.</p>
@@ -43,9 +43,9 @@ const post = {
     
     <p>Perhaps most importantly, community leadership has flourished. The original group of 15 has expanded to 60 active members who now coordinate their own initiatives, with Bright Hope serving as an occasional advisor rather than the primary driver of change.</p>
     
-    <p>"The biggest change isn't in our structures or systems," says Nasreen, who leads the water committee. "It's in how we see ourselves. We now approach problems as opportunities to come together rather than reasons to despair."</p>
+    <p>&quot;The biggest change isn&apos;t in our structures or systems,&quot; says Nasreen, who leads the water committee. &quot;It&apos;s in how we see ourselves. We now approach problems as opportunities to come together rather than reasons to despair.&quot;</p>
     
-    <p>As Bright Hope expands this model to other coastal communities in Bangladesh, the lesson from Patuakhali is clear: meaningful change doesn't always require massive resources or dramatic interventions. Sometimes, the most powerful catalyst is creating space for communities to recognize and mobilize their own strength.</p>
+    <p>The lesson from Patuakhali is clear: meaningful change doesn&apos;t always require massive resources or dramatic interventions. Sometimes, the most powerful catalyst is creating space for communities to recognize and mobilize their own strength.</p>
   `,
 };
 
@@ -112,7 +112,7 @@ export default function BlogPostPage() {
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md">
                   <Image
                     src={post.author.image}
-                    alt={`${post.author.name}'s profile picture`}
+                    alt={`${post.author.name}&apos;s profile picture`}
                     fill
                     className="w-full h-full object-cover"
                   />
@@ -177,7 +177,7 @@ export default function BlogPostPage() {
                   </svg>
                 </div>
                 <blockquote className="text-xl italic text-gray-700 relative z-10">
-                  The biggest change isn't in our structures or systems. It's in how we see ourselves. We now approach problems as opportunities to come together rather than reasons to despair.
+                  The biggest change isn&apos;t in our structures or systems. It&apos;s in how we see ourselves. We now approach problems as opportunities to come together rather than reasons to despair.
                 </blockquote>
                 <cite className="block mt-4 text-right text-gray-600 font-semibold">— Nasreen, Water Committee Leader</cite>
               </div>

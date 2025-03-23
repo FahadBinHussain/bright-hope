@@ -47,8 +47,8 @@ export default function VolunteerPage() {
         {loading ? (
           <div className="text-center py-8">Loading...</div>
         ) : volunteerWork.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-600">You haven't registered for any volunteer work yet.</p>
+          <div className="text-center p-8">
+            <p className="text-gray-600">You haven&apos;t registered for any volunteer work yet.</p>
             <a
               href="/main/volunteer"
               className="text-primary hover:underline mt-2 inline-block"

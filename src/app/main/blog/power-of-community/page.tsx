@@ -22,14 +22,14 @@ const post = {
     <p>While government relief was still mobilizing, local volunteers had already established emergency shelters in schools and community centers. They had activated phone trees to ensure no one was left behind. Community kitchens were operating before external aid arrived. Boats, normally used for fishing, were repurposed for rescue and transportation.</p>
     
     <h2>The Community Resilience Network</h2>
-    <p>This coordinated response wasn't spontaneous. It was the result of Bright Hope's Community Resilience Network, established three years earlier. This initiative works from a simple premise: local communities don't need to be merely recipients of aid during disasters – they can be the first and most effective responders when properly organized and resourced.</p>
+    <p>This coordinated response wasn&apos;t spontaneous. It was the result of Bright Hope&apos;s Community Resilience Network, established three years earlier. This initiative works from a simple premise: local communities don&apos;t need to be merely recipients of aid during disasters – they can be the first and most effective responders when properly organized and resourced.</p>
     
     <p>"Traditionally, disaster response meant waiting for outside help," explains Fatima Begum, a community leader from Chilmari upazila. "Now we understand that our own actions in the critical first 24-48 hours can save more lives than any external aid that arrives days later."</p>
     
     <h2>From Victims to First Responders</h2>
-    <p>The transformation from a mindset of victimhood to one of agency didn't happen overnight. It began with community mapping exercises where villagers identified their own resources and knowledge. They recognized that the elderly knew which areas flooded first from historical patterns. Fishermen had boats and intimate knowledge of the rivers. Women knew which families had special needs members requiring priority assistance.</p>
+    <p>The transformation from a mindset of victimhood to one of agency didn&apos;t happen overnight. It began with community mapping exercises where villagers identified their own resources and knowledge. They recognized that the elderly knew which areas flooded first from historical patterns. Fishermen had boats and intimate knowledge of the rivers. Women knew which families had special needs members requiring priority assistance.</p>
     
-    <p>Bright Hope's role was primarily facilitative – providing training in first aid, early warning systems, and emergency coordination. Small grants helped communities establish emergency supply caches and communication systems. But the leadership and planning remained firmly in local hands.</p>
+    <p>Bright Hope&apos;s role was primarily facilitative – providing training in first aid, early warning systems, and emergency coordination. Small grants helped communities establish emergency supply caches and communication systems. But the leadership and planning remained firmly in local hands.</p>
     
     <h2>Measuring Impact</h2>
     <p>The results speak for themselves:</p>
@@ -42,7 +42,7 @@ const post = {
     </ul>
     
     <h2>Beyond Disaster Response</h2>
-    <p>Perhaps most significantly, the committees formed for disaster response haven't disbanded after the emergency passed. The same networks that coordinated flood response have gone on to initiate other development projects:</p>
+    <p>Perhaps most significantly, the committees formed for disaster response haven&apos;t disbanded after the emergency passed. The same networks that coordinated flood response have gone on to initiate other development projects:</p>
     <ul>
       <li>Agricultural cooperatives to help farmers recover lost crops</li>
       <li>Community-based early childhood centers where mothers take turns providing childcare</li>
@@ -53,7 +53,7 @@ const post = {
     <h2>A Model for Climate Resilience</h2>
     <p>With Bangladesh on the frontlines of climate change – facing increased flooding, cyclones, and storm surges – the Community Resilience Network offers a model that scales effectively and sustainably. The program now operates in 17 communities across three districts, with plans to expand based on demand from other vulnerable areas.</p>
     
-    <p>"What makes this approach powerful is that it doesn't require massive external resources," notes Bright Hope's Climate Resilience Director. "It builds on existing community structures and indigenous knowledge, supplementing them with targeted training and modest financial support."</p>
+    <p>&quot;What makes this approach powerful is that it doesn&apos;t require massive external resources,&quot; notes Bright Hope&apos;s Climate Resilience Director. &quot;It builds on existing community structures and indigenous knowledge, supplementing them with targeted training and modest financial support.&quot;</p>
     
     <p>As global humanitarian systems strain under increasing climate-related disasters, community-led approaches like this may point the way forward – not just for Bangladesh, but for vulnerable regions worldwide.</p>
   `
@@ -122,7 +122,7 @@ export default function BlogPostPage() {
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md">
                   <Image
                     src={post.author.image}
-                    alt={`${post.author.name}'s profile picture`}
+                    alt={`${post.author.name}&apos;s profile picture`}
                     fill
                     className="w-full h-full object-cover"
                   />

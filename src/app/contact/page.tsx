@@ -15,7 +15,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Have questions about our work? Want to get involved? We'd love to hear from you.
+            Have questions about our work? Want to get involved? We&apos;d love to hear from you.
             Use the form below or contact us directly.
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function ContactPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="font-bold text-lg mb-2">How can I make a donation?</h3>
               <p className="text-gray-600">
-                You can make a donation through our website's donation page, by mail to our main office address, or by phone. We accept various payment methods including credit cards, bank transfers, and checks.
+                You can make a donation through our website&apos;s donation page, by mail to our main office address, or by phone. We accept various payment methods including credit cards, bank transfers, and checks.
               </p>
             </div>
             
@@ -211,7 +211,7 @@ export default function ContactPage() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="font-bold text-lg mb-2">Do you provide tax receipts for donations?</h3>
               <p className="text-gray-600">
-                Yes, we provide tax receipts for all donations. For online donations, you'll receive an email receipt immediately. For mail donations, we'll send a receipt within 2-3 weeks.
+                Yes, we provide tax receipts for all donations. For online donations, you&apos;ll receive an email receipt immediately. For mail donations, we&apos;ll send a receipt within 2-3 weeks.
               </p>
             </div>
           </div>

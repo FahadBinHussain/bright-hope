@@ -209,7 +209,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-12 text-center">Our History</h2>
           <div className="max-w-3xl mx-auto">
-            {timeline.map((item, index) => (
+            {timeline.map((item) => (
               <div
                 key={item.year}
                 className="relative pl-8 pb-8 last:pb-0"

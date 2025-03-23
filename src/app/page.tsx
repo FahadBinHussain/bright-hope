@@ -2,10 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/MainLayout";
-import { Heart, Users, Calendar, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
-import { PlaceholderImage } from "@/components/ui/placeholder-image";
-import { Card } from "@/components/ui/card";
+import { Heart, Users, Calendar } from "lucide-react";
 import { supabaseService } from "@/lib/services/supabase";
 
 // Server component to fetch data

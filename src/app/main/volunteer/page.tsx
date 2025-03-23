@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -10,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,11 +16,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 import MainLayout from "@/components/layout/MainLayout";
 import { Users, Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
-import { PlaceholderImage } from "@/components/ui/placeholder-image";
 import Image from "next/image";
+
+// Helper function to simulate API call
+const sendVolunteerApplication = async (data: VolunteerFormValues) => {
+  // In a real app, this would send data to an API endpoint
+  console.log("Volunteer application data:", data);
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return { success: true };
+};
 
 // Temporary data for volunteer opportunities
 const volunteerOpportunities = [
@@ -30,7 +35,7 @@ const volunteerOpportunities = [
     id: "1",
     title: "Flood Relief Volunteer",
     description:
-      "Help us reach and support communities affected by seasonal flooding in Bangladesh's low-lying areas. Assist with relief distribution and community needs assessment.",
+      "Help us reach and support communities affected by seasonal flooding in Bangladesh&apos;s low-lying areas. Assist with relief distribution and community needs assessment.",
     image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     location: "Sylhet and Sunamganj Districts",
     commitment: "4-6 hours per week",
@@ -50,7 +55,7 @@ const volunteerOpportunities = [
     id: "3",
     title: "Social Media Ambassador",
     description:
-      "Help manage our social media presence in Bangla and English, create content, and engage with our online community to raise awareness about our initiatives.",
+      "Use your digital media and communication professional skills to amplify Bright Hope&apos;s message across Bangladesh and help raise awareness about our initiatives. Help manage our social media presence in Bangla and English, create content, and engage with our online community to raise awareness about our initiatives.",
     image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1464&q=80",
     location: "Remote (Work from anywhere in Bangladesh)",
     commitment: "3-5 hours per week",
@@ -82,6 +87,8 @@ type VolunteerFormValues = z.infer<typeof volunteerFormSchema>;
 export default function VolunteerPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const form = useForm<VolunteerFormValues>({
     resolver: zodResolver(volunteerFormSchema),
@@ -97,18 +104,16 @@ export default function VolunteerPage() {
 
   async function onSubmit(data: VolunteerFormValues) {
     setIsLoading(true);
+    setIsSuccess(false);
+    setIsError(false);
 
     try {
-      // In a real application, this would call an API endpoint
-      console.log("Volunteer application submitted:", data);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast.success("Your volunteer application has been submitted!");
+      await sendVolunteerApplication(data);
+      setIsSuccess(true);
       form.reset();
-    } catch (error) {
-      toast.error("Failed to submit application. Please try again.");
+    } catch {
+      setIsError(true);
+      console.log("There was an error submitting your application. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -260,12 +265,24 @@ export default function VolunteerPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Volunteer Application</h2>
               <p className="text-lg text-gray-600">
-                Ready to get started? Fill out the form below and we'll be in
+                Ready to get started? Fill out the form below and we&apos;ll be in
                 touch soon to discuss how you can get involved.
               </p>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-6 md:p-8 shadow-sm">
+              {isSuccess && (
+                <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg">
+                  Thank you for your application! We&apos;ll be in touch soon.
+                </div>
+              )}
+              
+              {isError && (
+                <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg">
+                  There was an error submitting your application. Please try again.
+                </div>
+              )}
+
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -406,16 +423,16 @@ export default function VolunteerPage() {
             <h2 className="text-3xl font-bold mb-4">Volunteer Stories</h2>
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Hear from some of our dedicated volunteers about their experiences
-              and the impact they've made.
+              and the impact they&apos;ve made.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-800 p-6 rounded-lg">
               <p className="italic mb-4">
-                "Volunteering with Bright Hope has been one of the most
-                rewarding experiences of my life. I've met amazing people and
-                seen firsthand how we're transforming lives in flood-affected communities of Sylhet."
+                &quot;Volunteering with Bright Hope has been one of the most
+                rewarding experiences of my life. I&apos;ve met amazing people and
+                seen firsthand how we&apos;re transforming lives in flood-affected communities of Sylhet.&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
@@ -435,9 +452,9 @@ export default function VolunteerPage() {
 
             <div className="bg-gray-800 p-6 rounded-lg">
               <p className="italic mb-4">
-                "I started volunteering to give back to my community in Dhaka.
-                The skills I've developed and the connections I've made with rural
-                communities across Bangladesh are invaluable."
+                &quot;I started volunteering to give back to my community in Dhaka.
+                The skills I&apos;ve developed and the connections I&apos;ve made with rural
+                communities across Bangladesh are invaluable.&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
@@ -457,9 +474,9 @@ export default function VolunteerPage() {
 
             <div className="bg-gray-800 p-6 rounded-lg">
               <p className="italic mb-4">
-                "As a digital marketing volunteer, I've been able to use my
-                professional skills to amplify Bright Hope's message across Bangladesh and
-                help raise awareness about the challenges facing our coastal communities."
+                &quot;As a digital marketing volunteer, I&apos;ve been able to use my
+                professional skills to amplify Bright Hope&apos;s message across Bangladesh and
+                help raise awareness about the challenges facing our coastal communities.&quot;
               </p>
               <div className="flex items-center">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">

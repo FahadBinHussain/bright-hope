@@ -21,12 +21,18 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
   }
 }
 
-export async function cacheSet(key: string, value: any, expireInSeconds?: number): Promise<void> {
+// Define a type for cacheable values
+export type CacheableValue = string | number | boolean | object | null;
+
+export async function cacheSet(key: string, value: CacheableValue, expireInSeconds?: number): Promise<void> {
   try {
+    // Convert non-string values to JSON strings
+    const valueToStore = typeof value === 'string' ? value : JSON.stringify(value);
+    
     if (expireInSeconds) {
-      await redis.set(key, value, { ex: expireInSeconds });
+      await redis.set(key, valueToStore, { ex: expireInSeconds });
     } else {
-      await redis.set(key, value);
+      await redis.set(key, valueToStore);
     }
   } catch (error) {
     console.error('Redis cache set error:', error);

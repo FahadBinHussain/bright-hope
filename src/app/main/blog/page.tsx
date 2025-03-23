@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/MainLayout";
-import { Search, Calendar, Clock, ArrowRight } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Calendar, Clock, ArrowRight } from "lucide-react";
 
 // Temporary data for blog posts
+// Commented out as it's defined but not used
+/*
 const blogPosts = [
   {
     id: "1",
@@ -20,49 +20,25 @@ const blogPosts = [
       role: "Community Outreach Director",
       image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
     },
-    date: "March 14, 2024",
+    date: "August 15, 2023",
     readTime: "5 min read",
   },
-  {
-    id: "2",
-    slug: "sustainable-development",
-    title: "Sustainable Development: Building a Better Future",
-    excerpt:
-      "Learn about our approach to sustainable development and how it's helping communities thrive.",
-    image: "https://images.unsplash.com/photo-1552799446-159ba9523315?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    author: {
-      name: "Fahad Bin Hussain",
-      role: "Sustainability Director",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
-    },
-    date: "March 12, 2024",
-    readTime: "4 min read",
-  },
-  {
-    id: "3",
-    slug: "education-empowerment",
-    title: "Education as a Tool for Empowerment",
-    excerpt:
-      "Explore how education is transforming lives and creating opportunities in underserved communities.",
-    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1122&q=80",
-    author: {
-      name: "Emily Rodriguez",
-      role: "Education Program Manager",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=776&q=80",
-    },
-    date: "March 10, 2024",
-    readTime: "6 min read",
-  },
+  // ... more blog posts
 ];
+*/
 
+// Commented out as it's defined but not used
+/*
 const categories = [
   "All",
-  "Impact Stories",
-  "Programs",
-  "Volunteer Stories",
-  "News",
-  "Events",
+  "Community Development",
+  "Education",
+  "Health",
+  "Environment",
+  "Disaster Response",
+  "Technology",
 ];
+*/
 
 // Blog posts data
 const blogPostsData = {
@@ -121,26 +97,27 @@ const blogPostsData = {
 };
 
 export default function BlogPage() {
-  // Get the featured post
-  const featuredPost = Object.entries(blogPostsData).find(
-    ([slug, post]) => post.isFeatured
-  );
-  
-  // Get the remaining posts
-  const regularPosts = Object.entries(blogPostsData).filter(
-    ([slug, post]) => !post.isFeatured
-  );
+  // Featured post (first entry only)
+  const featuredPost = Object.entries(blogPostsData)
+    .filter(([, post]) => post.isFeatured)
+    .map(([slug, post]) => ({ slug, ...post }))
+    .slice(0, 1)[0];
+
+  // Regular posts (excluding featured)
+  const regularPosts = Object.entries(blogPostsData)
+    .filter(([, post]) => !post.isFeatured)
+    .map(([slug, post]) => ({ slug, ...post }));
 
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="relative bg-gray-900 text-white py-24">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70 mix-blend-multiply"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in-up">Stories of Hope and Impact</h1>
-            <p className="text-xl text-white/90 mb-8 animate-fade-in-up">
-              Join us as we share inspiring stories from the communities we serve and the impact we're making together.
+      <section className="bg-gradient-to-r from-primary/10 to-primary/5 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl font-bold mb-6">Blog</h1>
+            <p className="text-xl text-gray-700 mb-8">
+              Get the latest updates on our work, stories from the field, and
+              insights about sustainable development.
             </p>
           </div>
         </div>
@@ -150,12 +127,12 @@ export default function BlogPage() {
       {featuredPost && (
         <section className="py-24 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row gap-8 bg-white rounded-2xl shadow-xl overflow-hidden transform -translate-y-16 animate-fade-in-up">
+            <div className="flex flex-col md:flex-row gap-8 bg-white rounded-2xl shadow-xl overflow-hidden transform -translate-y-16">
               <div className="md:w-1/2 relative">
                 <div className="relative h-full min-h-[400px]">
                   <Image
-                    src={featuredPost[1].image}
-                    alt={featuredPost[1].title}
+                    src={featuredPost.image}
+                    alt={featuredPost.title}
                     fill
                     className="object-cover"
                   />
@@ -166,34 +143,34 @@ export default function BlogPage() {
                 </div>
               </div>
               <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">{featuredPost[1].title}</h2>
-                <p className="text-lg text-gray-600 mb-6">{featuredPost[1].excerpt}</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">{featuredPost.title}</h2>
+                <p className="text-lg text-gray-600 mb-6">{featuredPost.excerpt}</p>
                 <div className="flex items-center space-x-4 mb-8">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
                     <Image
-                      src={featuredPost[1].author.image}
-                      alt={featuredPost[1].author.name}
+                      src={featuredPost.author.image}
+                      alt={featuredPost.author.name}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div>
-                    <div className="font-medium text-gray-800">{featuredPost[1].author.name}</div>
-                    <div className="text-sm text-gray-500">{featuredPost[1].author.role}</div>
+                    <div className="font-medium text-gray-800">{featuredPost.author.name}</div>
+                    <div className="text-sm text-gray-500">{featuredPost.author.role}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-6 text-sm text-gray-500 mb-6">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-2" />
-                    {featuredPost[1].date}
+                    {featuredPost.date}
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-2" />
-                    {featuredPost[1].readTime}
+                    {featuredPost.readTime}
                   </div>
                 </div>
                 <Link
-                  href={`/main/blog/${featuredPost[0]}`}
+                  href={`/main/blog/${featuredPost.slug}`}
                   className="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors font-semibold self-start group"
                 >
                   Read Full Story
@@ -210,12 +187,11 @@ export default function BlogPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">Recent Stories</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularPosts.map(([slug, post], index) => (
+            {regularPosts.map((post) => (
               <Link 
-                key={slug} 
-                href={`/main/blog/${slug}`}
-                className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up"
-                style={{ animationDelay: `${index * 150}ms` }}
+                key={post.slug} 
+                href={`/main/blog/${post.slug}`}
+                className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="relative h-60">
                   <Image

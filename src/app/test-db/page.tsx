@@ -10,7 +10,7 @@ export default function TestDB() {
     async function testConnection() {
       try {
         // Test 1: Check if we can query campaigns
-        const { data: campaigns, error: campaignsError } = await supabaseService.supabase
+        const { error: campaignsError } = await supabaseService.supabase
           .from('campaigns')
           .select('*')
           .limit(1)
@@ -18,7 +18,7 @@ export default function TestDB() {
         if (campaignsError) throw campaignsError
 
         // Test 2: Check if we can query user_profiles
-        const { data: profiles, error: profilesError } = await supabaseService.supabase
+        const { error: profilesError } = await supabaseService.supabase
           .from('user_profiles')
           .select('*')
           .limit(1)
