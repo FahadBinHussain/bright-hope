@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/MainLayout";
 import { Heart, Users, Calendar, ArrowRight } from "lucide-react";
 import FallbackImage from "@/components/ui/fallback-image";
+import HeroImage from "@/components/ui/HeroImage";
 
 // Team members data
 const teamMembers = [
@@ -76,16 +77,13 @@ export default function AboutPage() {
     <MainLayout>
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white">
-        <div className="relative h-[400px] w-full">
-          <Image
-            src="https://images.unsplash.com/photo-1469524714134-1fd56ead1196?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1474&q=80"
-            alt="About Bright Hope"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute inset-0 container mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+        <HeroImage 
+          src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          alt="About Bright Hope"
+          height="h-[400px]"
+          fallbackSrc="/images/hero/home-hero.jpg"
+        >
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
             <div className="max-w-3xl">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 Our Story
@@ -97,7 +95,7 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </div>
+        </HeroImage>
       </section>
 
       {/* Mission Section */}
@@ -124,11 +122,12 @@ export default function AboutPage() {
               </Button>
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1589994965851-a8f479c573a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+              <FallbackImage
+                src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
                 alt="Our mission in action"
                 fill
                 className="object-cover"
+                fallbackText="Mission Image"
               />
             </div>
           </div>
