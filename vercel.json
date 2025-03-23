@@ -1,5 +1,0 @@
-{
-  "buildCommand": "prisma generate && next build --no-lint",
-  "ignoreCommand": "next-ignore-typescript-error",
-  "framework": "nextjs"
-} 
