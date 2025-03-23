@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import { Heart, Users, Globe, Home, Backpack, Leaf } from "lucide-react";
-import Image from "next/image";
+import { Heart, Users, Globe, Leaf } from "lucide-react";
 import FallbackImage from "@/components/ui/fallback-image";
 
 export default function ImpactPage() {
@@ -50,13 +49,13 @@ export default function ImpactPage() {
     {
       title: "Healthcare Access",
       location: "Chars of Brahmaputra, Jamalpur",
-      description: "Our mobile health clinics have provided medical care to 15,000 people in remote char areas. We've also trained 50 local healthcare workers to ensure sustainable healthcare delivery in these isolated communities.",
+      description: "Our mobile health clinics have provided medical care to 15,000 people in remote char areas. We&apos;ve also trained 50 local healthcare workers to ensure sustainable healthcare delivery in these isolated communities.",
       image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
     },
     {
       title: "Sustainable Farming",
       location: "Coastal Areas, Khulna",
-      description: "We've helped 400 farming families in saline-affected coastal areas adopt climate-resilient agriculture practices, increasing crop yields by 60% while ensuring food security in the region.",
+      description: "We&apos;ve helped 400 farming families in saline-affected coastal areas adopt climate-resilient agriculture practices, increasing crop yields by 60% while ensuring food security in the region.",
       image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     },
   ];
@@ -67,9 +66,8 @@ export default function ImpactPage() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">Our Impact</h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            At Bright Hope, we measure our success by the positive change we create. 
-            Here's how our work is transforming lives and communities around the world.
+          <p className="text-xl max-w-3xl mx-auto text-center mb-12">
+            Here&apos;s how our work is transforming lives and communities around the world.
           </p>
         </div>
         
@@ -146,7 +144,7 @@ export default function ImpactPage() {
           </h2>
           <p className="text-center text-gray-600 mb-8 max-w-3xl mx-auto">
             Our work contributes to the United Nations Sustainable Development Goals. 
-            We're proud to be part of the global effort to create a better future for all.
+            We&apos;re proud to be part of the global effort to create a better future for all.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {[1, 2, 3, 4, 6, 13].map((goal) => (
@@ -155,6 +153,9 @@ export default function ImpactPage() {
               </div>
             ))}
           </div>
+          <p className="text-center py-4 mt-8">
+            We&apos;re proud to be part of the global effort to create a better future for all.
+          </p>
         </div>
       </div>
     </MainLayout>

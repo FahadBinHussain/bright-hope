@@ -55,7 +55,6 @@ const team = [
 
 export default function AboutPage() {
   const [images, setImages] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -88,8 +87,6 @@ export default function AboutPage() {
         });
       } catch (error) {
         console.error('Error fetching images:', error);
-      } finally {
-        setLoading(false);
       }
     };
 

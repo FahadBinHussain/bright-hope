@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { supabaseService } from "@/lib/services/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

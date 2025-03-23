@@ -19,8 +19,8 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
             <p>
-              Welcome to Bright Hope. These Terms of Service ("Terms") govern your use of our website 
-              (the "Service") operated by Bright Hope ("us", "we", or "our").
+              Welcome to Bright Hope. These Terms of Service (&quot;Terms&quot;) govern your use of our website 
+              (the &quot;Service&quot;) operated by Bright Hope (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;).
             </p>
             <p className="mt-4">
               By accessing or using the Service, you agree to be bound by these Terms. If you disagree 
@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
             <p>
               Our Service allows you to learn about our charitable activities, make donations, and volunteer 
               for our causes. By using our Service, you agree to use it only for lawful purposes and in a way 
-              that does not infringe the rights of, restrict or inhibit anyone else's use and enjoyment of the website.
+              that does not infringe the rights of, restrict or inhibit anyone else&apos;s use and enjoyment of the website.
             </p>
             <p className="mt-4">
               Prohibited behavior includes harassing or causing distress or inconvenience to any person, 
@@ -109,7 +109,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">8. Changes to Terms</h2>
             <p>
               We reserve the right, at our sole discretion, to modify or replace these Terms at any time. 
-              If a revision is material, we will try to provide at least 30 days' notice prior to any new 
+              If a revision is material, we will try to provide at least 30 days&apos; notice prior to any new 
               terms taking effect. What constitutes a material change will be determined at our sole discretion.
             </p>
             <p className="mt-4">

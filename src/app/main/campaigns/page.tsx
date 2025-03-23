@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/MainLayout";
-import { Search, Filter, ArrowRight } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 // Temporary data for campaigns
@@ -36,7 +36,7 @@ const campaigns = [
     slug: "healthcare-access",
     title: "Healthcare Access",
     description:
-      "Join us in providing essential healthcare services to remote communities. We're building clinics and training local healthcare workers.",
+      "Join us in providing essential healthcare services to remote communities. We&apos;re building clinics and training local healthcare workers.",
     image: "/images/campaigns/healthcare.jpg",
     category: "Health",
     goal: 100000,
@@ -58,7 +58,7 @@ const campaigns = [
   {
     id: "5",
     slug: "womens-empowerment",
-    title: "Women's Empowerment",
+    title: "Women&apos;s Empowerment",
     description:
       "Support programs that provide women with skills training, microloans, and resources to start businesses and achieve financial independence.",
     image: "/images/campaigns/women.jpg",
@@ -206,7 +206,7 @@ export default function CampaignsPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Start Your Own Campaign</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Have a cause you're passionate about? Start your own fundraising
+            Have a cause you&apos;re passionate about? Start your own fundraising
             campaign and rally your community to make a difference.
           </p>
           <Button size="lg" variant="secondary" asChild>

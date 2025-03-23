@@ -2,11 +2,7 @@
 
 import { useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import Image from "next/image";
 import { Facebook, Twitter, Linkedin } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
 import FallbackImage from "@/components/ui/fallback-image";
 
 export default function TeamPage() {

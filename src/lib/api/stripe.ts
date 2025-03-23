@@ -11,7 +11,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export default stripe;
 
-export async function createPaymentIntent(amount: number, currency: string = 'usd', metadata: any = {}) {
+// Define a type for metadata
+export type StripeMetadata = Record<string, string>;
+
+export async function createPaymentIntent(amount: number, currency: string = 'usd', metadata: StripeMetadata = {}) {
   return stripe.paymentIntents.create({
     amount: Math.round(amount * 100), // Convert to cents
     currency,
@@ -24,7 +27,7 @@ export async function createCheckoutSession(params: {
   currency?: string;
   successUrl: string;
   cancelUrl: string;
-  metadata?: any;
+  metadata?: StripeMetadata;
   campaignId?: string;
   userId: string;
 }) {

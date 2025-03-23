@@ -2,9 +2,7 @@
 
 import { useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import FallbackImage from "@/components/ui/fallback-image";
 
 export default function PartnersPage() {
@@ -99,7 +97,7 @@ export default function PartnersPage() {
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">Our Partners</h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We're proud to work with a diverse network of partners who share our vision for a better world. 
+            We&apos;re proud to work with a diverse network of partners who share our vision for a better world. 
             Together, we amplify our impact and create lasting change in communities around the globe.
           </p>
         </div>
@@ -145,7 +143,7 @@ export default function PartnersPage() {
         <div className="bg-primary/10 rounded-lg p-8 max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4">Become a Partner</h2>
           <p className="text-gray-700 mb-6">
-            Interested in partnering with Bright Hope? We're always looking for organizations that share our values and mission.
+            Interested in partnering with Bright Hope? We&apos;re always looking for organizations that share our values and mission.
             Together, we can make a greater impact and transform more lives.
           </p>
           <div className="flex justify-center">

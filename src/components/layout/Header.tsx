@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, Menu, User, X } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
@@ -28,9 +28,9 @@ const navItems = [
 ];
 
 export default function Header() {
-  const { user, loading } = useSupabase();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useSupabase();
 
   const handleSignOut = async () => {
     await supabaseService.signOut();
@@ -130,11 +130,11 @@ export default function Header() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
-              {mobileMenuOpen ? (
+              {isMenuOpen ? (
                 <X className="block h-6 w-6" aria-hidden="true" />
               ) : (
                 <Menu className="block h-6 w-6" aria-hidden="true" />
@@ -146,7 +146,7 @@ export default function Header() {
 
       {/* Mobile menu */}
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -163,7 +163,7 @@ export default function Header() {
                       ? "border-primary text-primary bg-primary/10"
                       : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
                   }`}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
@@ -202,34 +202,34 @@ export default function Header() {
                     <Link
                       href="/main/dashboard"
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
                       href="/main/dashboard/donations"
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       My Donations
                     </Link>
                     <Link
                       href="/main/dashboard/volunteer"
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       My Volunteer Work
                     </Link>
                     <Link
                       href="/main/dashboard/profile"
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     <button
                       onClick={() => {
-                        setMobileMenuOpen(false);
+                        setIsMenuOpen(false);
                         handleSignOut();
                       }}
                       className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
@@ -245,7 +245,7 @@ export default function Header() {
                     className="w-full justify-start text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                     asChild
                   >
-                    <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
                       Sign in
                     </Link>
                   </Button>
@@ -253,7 +253,7 @@ export default function Header() {
                     className="w-full"
                     asChild
                   >
-                    <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
+                    <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
                       Sign up
                     </Link>
                   </Button>

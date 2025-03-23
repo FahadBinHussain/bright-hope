@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { constructEventFromPayload } from "@/lib/api/stripe";
 import prisma from "@/lib/db/prisma";
+import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
   const payload = await req.text();
@@ -11,17 +12,17 @@ export async function POST(req: NextRequest) {
 
     switch (event.type) {
       case "checkout.session.completed": {
-        const session = event.data.object as any;
-        const { userId, campaignId } = session.metadata;
+        const session = event.data.object as Stripe.Checkout.Session;
+        const { userId, campaignId } = session.metadata || {};
 
         // Create donation record
         const donation = await prisma.donation.create({
           data: {
-            amount: session.amount_total / 100, // Convert from cents
-            currency: session.currency.toUpperCase(),
+            amount: session.amount_total ? session.amount_total / 100 : 0, // Convert from cents
+            currency: session.currency ? session.currency.toUpperCase() : 'USD',
             status: "COMPLETED",
-            paymentIntentId: session.payment_intent,
-            receiptUrl: session.receipt_url,
+            paymentIntentId: typeof session.payment_intent === 'string' ? session.payment_intent : undefined,
+            receiptUrl: undefined, // Will be updated when payment_intent.succeeded is triggered
             userId,
             ...(campaignId ? { campaignId } : {}),
           },
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object as any;
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
         
         // Update donation status if it exists
         if (paymentIntent.id) {
@@ -51,7 +52,9 @@ export async function POST(req: NextRequest) {
             where: { paymentIntentId: paymentIntent.id },
             data: {
               status: "COMPLETED",
-              receiptUrl: paymentIntent.charges?.data[0]?.receipt_url,
+              receiptUrl: paymentIntent.latest_charge ? 
+                typeof paymentIntent.latest_charge === 'string' ? 
+                  undefined : paymentIntent.latest_charge.receipt_url : undefined,
             },
           });
         }
@@ -60,7 +63,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object as any;
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
         
         // Update donation status if it exists
         if (paymentIntent.id) {
