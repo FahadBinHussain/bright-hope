@@ -21,10 +21,13 @@ export default function VolunteerPage() {
         const { data, error } = await supabaseService.supabase
           .from('volunteers')
           .select('*')
-          .eq('email', user.email)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching volunteer work:', JSON.stringify(error));
+          throw error;
+        }
         setVolunteerWork(data || []);
       } catch (error) {
         console.error('Error fetching volunteer work:', error);
@@ -64,7 +67,7 @@ export default function VolunteerPage() {
                   <div className="flex items-center">
                     <Users className="h-5 w-5 text-primary mr-2" />
                     <span className="text-xl font-semibold">
-                      {work.name}
+                      {work.role}
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mt-1">
