@@ -1,11 +1,45 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/components/layout/MainLayout";
 import { Search, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Suspense, useState } from "react";
 
-// Temporary data for campaigns
+// Image components with event handlers need to be Client Components
+function CampaignImage({ src, alt }: { src: string; alt: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  
+  return (
+    <div className="relative h-48 bg-gray-200">
+      {(isLoading || hasError) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+          {hasError ? 
+            <p className="text-gray-500">Image not available</p> :
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          }
+        </div>
+      )}
+      <Image
+        src={hasError ? "/images/placeholder.svg" : src}
+        alt={alt}
+        fill
+        className={`object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        loading="lazy" 
+        onLoadingComplete={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setHasError(true);
+        }}
+      />
+    </div>
+  );
+}
+
+// Reduced static campaign data - using local images instead of remote Unsplash URLs
 const campaigns = [
   {
     id: "1",
@@ -13,7 +47,7 @@ const campaigns = [
     title: "Clean Water Initiative",
     description:
       "Help us provide clean water to communities in need. Your donation can save lives and improve health outcomes for thousands of people.",
-    image: "/images/campaigns/water.jpg",
+    image: "/images/placeholder.svg",
     category: "Health",
     goal: 50000,
     raised: 32500,
@@ -25,7 +59,7 @@ const campaigns = [
     title: "Education for All",
     description:
       "Support our mission to bring quality education to underprivileged children around the world. Education is the key to breaking the cycle of poverty.",
-    image: "/images/campaigns/education.jpg",
+    image: "/images/placeholder.svg",
     category: "Education",
     goal: 75000,
     raised: 45000,
@@ -37,7 +71,7 @@ const campaigns = [
     title: "Healthcare Access",
     description:
       "Join us in providing essential healthcare services to remote communities. We&apos;re building clinics and training local healthcare workers.",
-    image: "/images/campaigns/healthcare.jpg",
+    image: "/images/placeholder.svg",
     category: "Health",
     goal: 100000,
     raised: 68000,
@@ -49,7 +83,7 @@ const campaigns = [
     title: "Sustainable Agriculture",
     description:
       "Help farmers in developing regions implement sustainable farming practices that increase yields while protecting the environment.",
-    image: "/images/campaigns/agriculture.jpg",
+    image: "/images/placeholder.svg",
     category: "Environment",
     goal: 60000,
     raised: 28000,
@@ -61,7 +95,7 @@ const campaigns = [
     title: "Women&apos;s Empowerment",
     description:
       "Support programs that provide women with skills training, microloans, and resources to start businesses and achieve financial independence.",
-    image: "/images/campaigns/women.jpg",
+    image: "/images/placeholder.svg",
     category: "Social Justice",
     goal: 80000,
     raised: 52000,
@@ -73,7 +107,7 @@ const campaigns = [
     title: "Disaster Relief Fund",
     description:
       "Help us respond quickly to natural disasters with emergency supplies, shelter, and support for affected communities.",
-    image: "/images/campaigns/disaster.jpg",
+    image: "/images/placeholder.svg",
     category: "Emergency",
     goal: 120000,
     raised: 95000,
@@ -144,16 +178,14 @@ export default function CampaignsPage() {
                 key={campaign.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md transition-transform hover:shadow-lg hover:-translate-y-1"
               >
-                <div className="relative h-48">
-                  <Image
-                    src={campaign.image}
-                    alt={campaign.title}
-                    fill
-                    className="object-cover"
+                <Suspense fallback={<div className="h-48 bg-gray-200 animate-pulse"></div>}>
+                  <CampaignImage 
+                    src={campaign.image} 
+                    alt={campaign.title} 
                   />
-                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">
-                    {campaign.category}
-                  </div>
+                </Suspense>
+                <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">
+                  {campaign.category}
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{campaign.title}</h3>
