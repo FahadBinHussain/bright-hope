@@ -50,10 +50,11 @@ export interface Campaign {
 
 export interface Donation {
   id: string
-  campaign_id: string
+  campaign_id: string | null
   amount: number
-  donor_name: string
-  donor_email: string
+  user_id: string
+  anonymous?: boolean
+  message?: string
   created_at: string
 }
 
@@ -175,7 +176,23 @@ export const supabaseService = {
       password,
     })
     
-    if (error) throw error
+    if (error) {
+      console.error('Supabase auth error details:', error);
+      
+      // Handle specific error cases
+      if (error.message.includes('Email not confirmed')) {
+        throw new Error('Please check your email to confirm your account before logging in');
+      } else if (error.message.includes('Invalid login credentials')) {
+        throw new Error('The email or password you entered is incorrect');
+      } else if (error.status === 400) {
+        throw new Error('Login failed: ' + error.message);
+      } else if (error.status === 422) {
+        throw new Error('Invalid email or password format');
+      } else {
+        throw error;
+      }
+    }
+    
     return data
   },
 

@@ -29,18 +29,50 @@ export default function DashboardPage() {
       }
 
       try {
-        console.log('Fetching donations for user:', user.email);
-        // Fetch donations
-        const { data: donations, error: donationsError } = await supabaseService.supabase
-          .from('donations')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (donationsError) {
-          console.error('Error fetching donations:', JSON.stringify(donationsError));
-          throw new Error(`Failed to fetch donations: ${donationsError.message}`);
+        console.log('Fetching donations for user:', user.email, 'with ID:', user.id);
+        // Fetch donations with retry mechanism
+        let donations = null;
+        let donationsError = null;
+        let attempts = 0;
+        
+        while (attempts < 3 && donations === null) {
+          attempts++;
+          try {
+            const { data, error } = await supabaseService.supabase
+              .from('donations')
+              .select('*')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: false })
+              .limit(5);
+            
+            if (error) {
+              console.error(`Attempt ${attempts}: Error fetching donations:`, JSON.stringify(error));
+              donationsError = error;
+            } else {
+              donations = data || [];
+              console.log(`Successfully fetched ${donations.length} donations on attempt ${attempts}`);
+              
+              // Debug log each donation
+              donations.forEach((donation, index) => {
+                console.log(`Donation ${index + 1}:`, {
+                  id: donation.id,
+                  amount: donation.amount,
+                  created_at: donation.created_at
+                });
+              });
+            }
+          } catch (e) {
+            console.error(`Attempt ${attempts}: Exception fetching donations:`, e);
+          }
+          
+          if (donations === null && attempts < 3) {
+            // Wait a bit before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+        
+        if (donations === null) {
+          throw new Error(`Failed to fetch donations after ${attempts} attempts: ${donationsError?.message || 'Unknown error'}`);
         }
 
         console.log('Fetching volunteer work for user:', user.email);
@@ -58,12 +90,13 @@ export default function DashboardPage() {
         }
 
         // Calculate total donations
-        const totalDonations = donations?.reduce((sum, donation) => sum + donation.amount, 0) || 0;
+        const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0) || 0;
+        console.log('Total donations calculated:', totalDonations);
 
         setStats({
           totalDonations,
           totalVolunteerWork: volunteerWork?.length || 0,
-          recentDonations: donations || [],
+          recentDonations: donations,
           recentVolunteerWork: volunteerWork || [],
         });
         setError(null);
@@ -77,6 +110,18 @@ export default function DashboardPage() {
 
     fetchDashboardData();
   }, [user]);
+
+  // Function to format the date for "Member Since"
+  const formatMemberSince = () => {
+    if (!user || !user.created_at) return 'Unknown';
+    
+    try {
+      return format(new Date(user.created_at), 'MMM yyyy');
+    } catch (error) {
+      console.error('Error formatting created_at date:', error);
+      return 'Unknown';
+    }
+  };
 
   const dashboardLinks = [
     {
@@ -179,7 +224,7 @@ export default function DashboardPage() {
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Member Since</h3>
                 <p className="text-2xl font-bold text-purple-500">
-                  {user?.created_at ? format(new Date(user.created_at), 'MMM yyyy') : 'N/A'}
+                  {formatMemberSince()}
                 </p>
               </div>
             </div>

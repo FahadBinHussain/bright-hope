@@ -17,7 +17,7 @@ export default function TeamPage() {
       bio: "Mahir leads our organization with passion and strategic vision. With extensive experience in nonprofit management, he ensures that Bright Hope continues to create meaningful impact in communities around the world.",
       image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
       social: {
-        linkedin: "https://linkedin.com/in/mahirabdullah",
+        linkedin: "https://www.linkedin.com/in/mahir-abdullah/",
         twitter: "https://twitter.com/mahirabdullah",
       },
     },
