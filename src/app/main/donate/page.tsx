@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import MainLayout from "@/components/layout/MainLayout";
 import { Heart, DollarSign } from "lucide-react";
+import { supabaseService } from "@/lib/services/supabase";
 
 const donationSchema = z.object({
   amount: z
@@ -73,16 +74,30 @@ export default function DonatePage() {
     setIsLoading(true);
 
     try {
-      // In a real application, this would call the Stripe checkout API
-      const response = await fetch("/api/stripe/checkout", {
+      // Get the current session to extract the access token
+      const { data: sessionData } = await supabaseService.supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      
+      if (!accessToken) {
+        throw new Error("Unable to get authentication token");
+      }
+      
+      // Get current origin to create dynamic success/cancel URLs
+      const origin = window.location.origin;
+      console.log("Current origin for donation return URLs:", origin);
+      
+      // Call the ShurjoPay checkout API with the authorization header
+      const response = await fetch("/api/shurjopay/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           amount: parseFloat(data.amount),
-          successUrl: `${window.location.origin}/main/donate/success`,
-          cancelUrl: `${window.location.origin}/main/donate`,
+          // Use dynamic origin to create return URLs
+          successUrl: `${origin}/main/donate/success`,
+          cancelUrl: `${origin}/main/donate`,
         }),
       });
 
@@ -92,7 +107,10 @@ export default function DonatePage() {
         throw new Error(result.error || "Failed to create checkout session");
       }
 
-      // Redirect to Stripe checkout
+      // Log the payment ID for debugging
+      console.log("Payment initiated with order ID:", result.orderId);
+
+      // Redirect to ShurjoPay checkout
       window.location.href = result.url;
     } catch (error) {
       console.error("Donation error:", error);

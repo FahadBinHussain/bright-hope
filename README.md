@@ -9,7 +9,7 @@ A professional, high-class charity platform built with modern web technologies t
 - **Animations**: Framer Motion for smooth transitions and interactions
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js with Google OAuth and email/password
-- **Payments**: Stripe API for secure donation processing
+- **Payments**: ShurjoPay payment gateway for secure donation processing
 - **Caching**: Redis (Upstash) for performance and analytics
 - **Deployment**: Vercel (Frontend) + Fly.io (Backend if needed)
 - **Security**: Cloudflare for protection and performance
@@ -29,7 +29,7 @@ A professional, high-class charity platform built with modern web technologies t
 
 - Node.js 18+ and npm
 - PostgreSQL database
-- Stripe account
+- ShurjoPay merchant account
 - Upstash Redis account
 - Google OAuth credentials (for authentication)
 
@@ -48,7 +48,7 @@ A professional, high-class charity platform built with modern web technologies t
 
 3. Set up environment variables:
    - Copy `.env.example` to `.env`
-   - Fill in your database, Stripe, NextAuth, and other credentials
+   - Fill in your database, ShurjoPay, NextAuth, and other credentials
 
 4. Set up the database:
    ```bash
@@ -93,5 +93,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [ShadCN UI](https://ui.shadcn.com/)
 - [Prisma](https://www.prisma.io/)
 - [NextAuth.js](https://next-auth.js.org/)
-- [Stripe](https://stripe.com/)
+- [ShurjoPay](https://shurjopay.com.bd/)
 - [Upstash Redis](https://upstash.com/)

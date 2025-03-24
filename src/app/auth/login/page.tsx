@@ -47,6 +47,35 @@ function LoginForm() {
       setLoading(false);
     }
   };
+  
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      setError("Please enter your email address");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // Call the Supabase API to resend the verification email
+      const { error } = await supabaseService.supabase.auth.resend({
+        type: 'signup',
+        email: formData.email
+      });
+      
+      if (error) throw error;
+      
+      setMessage("Verification email resent. Please check your inbox.");
+      setError(null);
+    } catch (error) {
+      console.error("Failed to resend verification:", error);
+      setError(error instanceof Error ? error.message : "Failed to resend verification email");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Check if error indicates unverified email
+  const isUnverifiedEmailError = error?.includes('confirm your account');
 
   return (
     <form onSubmit={handleSubmit}>
@@ -74,7 +103,19 @@ function LoginForm() {
         </div>
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {error}
+              {isUnverifiedEmailError && (
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto text-sm underline ml-2" 
+                  onClick={handleResendVerification}
+                  disabled={loading}
+                >
+                  Resend verification email
+                </Button>
+              )}
+            </AlertDescription>
           </Alert>
         )}
         {message && (

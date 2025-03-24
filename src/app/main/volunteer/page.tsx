@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSupabase } from "@/components/providers/SupabaseProvider";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,7 +85,7 @@ const volunteerFormSchema = z.object({
 type VolunteerFormValues = z.infer<typeof volunteerFormSchema>;
 
 export default function VolunteerPage() {
-  const { data: session } = useSession();
+  const { user } = useSupabase();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -93,8 +93,8 @@ export default function VolunteerPage() {
   const form = useForm<VolunteerFormValues>({
     resolver: zodResolver(volunteerFormSchema),
     defaultValues: {
-      name: session?.user?.name || "",
-      email: session?.user?.email || "",
+      name: user?.user_metadata?.full_name || "",
+      email: user?.email || "",
       phone: "",
       interests: "",
       experience: "",
