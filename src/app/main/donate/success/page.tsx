@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MainLayout from "@/components/layout/MainLayout";
 import { Check, ArrowLeft, UserCircle, Bug } from "lucide-react";
@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
 import { supabaseService } from "@/lib/services/supabase";
 
-export default function DonationSuccessPage() {
+// Create a separate component that uses searchParams
+function DonationSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -304,104 +305,122 @@ export default function DonationSuccessPage() {
   };
   
   return (
-    <MainLayout>
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="h-8 w-8 text-green-600" />
+    <div className="container mx-auto px-4 py-16 max-w-4xl">
+      <div className="text-center mb-10">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Check className="h-8 w-8 text-green-600" />
+        </div>
+        <h1 className="text-3xl font-bold mb-4">Thank You for Your Donation!</h1>
+        <p className="text-gray-600 text-lg mb-8">
+          Your generous support helps us continue our mission of making a positive impact in communities around the world.
+        </p>
+        
+        {loading ? (
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            <p className="mt-4 text-blue-600">Verifying your donation...</p>
           </div>
-          <h1 className="text-3xl font-bold mb-4">Thank You for Your Donation!</h1>
-          <p className="text-gray-600 text-lg mb-8">
-            Your generous support helps us continue our mission of making a positive impact in communities around the world.
-          </p>
-          
-          {loading ? (
-            <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-              <p className="mt-4 text-blue-600">Verifying your donation...</p>
-            </div>
-          ) : verificationResult?.success ? (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 inline-block">
-              <p className="text-green-700">Your donation has been successfully processed.</p>
-              <p className="text-sm mt-2">Redirecting to your donations page...</p>
-            </div>
-          ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 inline-block">
-              <p className="text-yellow-700">
-                {getErrorMessage()}
-              </p>
+        ) : verificationResult?.success ? (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 inline-block">
+            <p className="text-green-700">Your donation has been successfully processed.</p>
+            <p className="text-sm mt-2">Redirecting to your donations page...</p>
+          </div>
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 inline-block">
+            <p className="text-yellow-700">
+              {getErrorMessage()}
+            </p>
+            
+            {specificError === "missing_user_id" && user && (
+              <div className="mt-3 text-sm">
+                <p className="text-gray-700 mb-2">
+                  Your payment may have been processed, but we couldn't link it to your account.
+                </p>
+                <div className="flex justify-center space-x-3 mt-2">
+                  <Button onClick={() => router.push('/main/profile')} variant="outline" size="sm" className="flex items-center">
+                    <UserCircle className="mr-1 h-4 w-4" />
+                    Check Profile
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            <Button onClick={() => verifyDonation()} className="mt-3 bg-yellow-500 hover:bg-yellow-600">
+              Try Again
+            </Button>
+            
+            <div className="mt-3 text-xs text-gray-500">
+              <button 
+                onClick={() => setShowDebug(!showDebug)} 
+                className="flex items-center justify-center mx-auto text-gray-500 hover:text-gray-700"
+              >
+                <Bug className="h-3 w-3 mr-1" /> 
+                {showDebug ? 'Hide Debug Info' : 'Show Debug Info'}
+              </button>
               
-              {specificError === "missing_user_id" && user && (
-                <div className="mt-3 text-sm">
-                  <p className="text-gray-700 mb-2">
-                    Your payment may have been processed, but we couldn't link it to your account.
-                  </p>
-                  <div className="flex justify-center space-x-3 mt-2">
-                    <Button onClick={() => router.push('/main/profile')} variant="outline" size="sm" className="flex items-center">
-                      <UserCircle className="mr-1 h-4 w-4" />
-                      Check Profile
-                    </Button>
-                  </div>
+              {showDebug && debug && (
+                <div className="mt-2 bg-gray-100 p-2 rounded text-left overflow-auto max-h-60">
+                  <pre className="text-xs">{JSON.stringify(debug, null, 2)}</pre>
                 </div>
               )}
-              
-              <Button onClick={() => verifyDonation()} className="mt-3 bg-yellow-500 hover:bg-yellow-600">
-                Try Again
-              </Button>
-              
-              <div className="mt-3 text-xs text-gray-500">
-                <button 
-                  onClick={() => setShowDebug(!showDebug)} 
-                  className="flex items-center justify-center mx-auto text-gray-500 hover:text-gray-700"
-                >
-                  <Bug className="h-3 w-3 mr-1" /> 
-                  {showDebug ? 'Hide Debug Info' : 'Show Debug Info'}
-                </button>
-                
-                {showDebug && debug && (
-                  <div className="mt-2 bg-gray-100 p-2 rounded text-left overflow-auto max-h-60">
-                    <pre className="text-xs">{JSON.stringify(debug, null, 2)}</pre>
-                  </div>
-                )}
-              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="flex flex-col items-center space-y-4">
+        <Button onClick={() => router.push('/main/donate')} variant="outline" className="flex items-center space-x-2">
+          <ArrowLeft className="h-4 w-4" />
+          <span>Make Another Donation</span>
+        </Button>
         
-        <div className="flex flex-col items-center space-y-4">
-          <Button onClick={() => router.push('/main/donate')} variant="outline" className="flex items-center space-x-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Make Another Donation</span>
-          </Button>
-          
-          <Button onClick={() => router.push('/main/dashboard/donations')} variant="secondary" className="flex items-center space-x-2">
-            <span>View My Donations</span>
-          </Button>
-          
-          <Button onClick={() => router.push('/main')} variant="link" className="text-primary">
-            Return to Home
-          </Button>
-        </div>
+        <Button onClick={() => router.push('/main/dashboard/donations')} variant="secondary" className="flex items-center space-x-2">
+          <span>View My Donations</span>
+        </Button>
+        
+        <Button onClick={() => router.push('/main')} variant="link" className="text-primary">
+          Return to Home
+        </Button>
+      </div>
 
-        <div className="mt-16 border-t border-gray-100 pt-8">
-          <h2 className="text-xl font-semibold mb-4">What Your Donation Supports</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Community Development</h3>
-              <p className="text-gray-600 text-sm">Supporting infrastructure and resources for communities in need.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Education Programs</h3>
-              <p className="text-gray-600 text-sm">Providing learning opportunities for children and adults.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Healthcare Initiatives</h3>
-              <p className="text-gray-600 text-sm">Improving access to healthcare services in underserved areas.</p>
-            </div>
+      <div className="mt-16 border-t border-gray-100 pt-8">
+        <h2 className="text-xl font-semibold mb-4">What Your Donation Supports</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Community Development</h3>
+            <p className="text-gray-600 text-sm">Supporting infrastructure and resources for communities in need.</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Education Programs</h3>
+            <p className="text-gray-600 text-sm">Providing learning opportunities for children and adults.</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Healthcare Initiatives</h3>
+            <p className="text-gray-600 text-sm">Improving access to healthcare services in underserved areas.</p>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function DonationSuccessPage() {
+  return (
+    <MainLayout>
+      <Suspense fallback={
+        <div className="container mx-auto px-4 py-16 max-w-4xl">
+          <div className="animate-pulse text-center">
+            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
+            <div className="h-20 bg-gray-100 rounded-lg w-3/4 mx-auto"></div>
+          </div>
+        </div>
+      }>
+        <DonationSuccessContent />
+      </Suspense>
     </MainLayout>
   );
 } 

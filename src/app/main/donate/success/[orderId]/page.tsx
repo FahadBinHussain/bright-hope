@@ -3,11 +3,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function DonationSuccessRedirect({ 
-  params 
-}: { 
-  params: { orderId: string } 
-}) {
+interface PageProps {
+  params: { 
+    orderId: string;
+  };
+}
+
+export default function DonationSuccessRedirect({ params }: PageProps) {
   const router = useRouter();
   
   useEffect(() => {
