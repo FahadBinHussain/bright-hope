@@ -3,6 +3,11 @@ import { verifyPayment } from "@/lib/api/shurjopay";
 import { createClient } from '@supabase/supabase-js';
 import { getPaymentMetadata, removePaymentMetadata } from "@/lib/api/payment-store";
 
+// Simple in-memory cache to prevent duplicate processing
+// This will be reset when the server restarts, but it's enough
+// to handle multiple webhook calls that happen in quick succession
+const PROCESSED_TRANSACTIONS = new Set<string>();
+
 // Create Supabase client with service role
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -37,8 +42,23 @@ export async function POST(req: NextRequest) {
     }
 
     const payment = paymentDetails[0];
-    console.log(`[Webhook] Raw payment verification response:`, JSON.stringify(paymentDetails));
     
+    // IMMEDIATELY check if we've already processed this transaction
+    // This is the most reliable way to prevent duplicates
+    const transactionId = payment.bank_trx_id || order_id;
+    if (PROCESSED_TRANSACTIONS.has(transactionId)) {
+      console.log(`[Webhook] Transaction ${transactionId} already processed in this session, skipping`);
+      return NextResponse.json({
+        success: true,
+        message: "Transaction already processed (memory cache)",
+        status: payment.sp_status
+      }, { headers: { 'Content-Type': 'application/json' } });
+    }
+    
+    // Mark as processed right away to prevent race conditions
+    PROCESSED_TRANSACTIONS.add(transactionId);
+    
+    console.log(`[Webhook] Raw payment verification response:`, JSON.stringify(paymentDetails));
     console.log(`[Webhook] Payment verification successful for order_id: ${order_id}`, {
       status: payment.sp_status,
       amount: payment.amount,
@@ -60,8 +80,6 @@ export async function POST(req: NextRequest) {
       console.log(`[Webhook] User ID missing in payment data, checking payment store for order_id: ${order_id}`);
       
       try {
-        // Try the payment store instead of Prisma
-        console.log(`[Webhook] Checking payment store`);
         const storedMetadata = await getPaymentMetadata(order_id);
         
         if (storedMetadata?.userId) {
@@ -81,39 +99,8 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // First, check if we've already processed this donation
-    try {
-      // Check for recent donations with same amount (within last 5 minutes)
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-      const { data: existingDonation } = await supabase
-        .from('donations')
-        .select('id, amount, created_at')
-        .eq('user_id', userId)
-        .eq('amount', parseFloat(payment.amount))
-        .gte('created_at', fiveMinutesAgo)
-        .order('created_at', { ascending: false })
-        .limit(1);
-        
-      console.log(`[Webhook] Checking for recent donations for user ${userId}:`, {
-        found: existingDonation && existingDonation.length > 0,
-        existingAmount: existingDonation?.[0]?.amount,
-        newAmount: parseFloat(payment.amount),
-        existingDonation: existingDonation?.[0]
-      });
-      
-      // If we already have a recent donation with this amount, just return success
-      if (existingDonation && existingDonation.length > 0) {
-        console.log(`[Webhook] Found recent donation for user ${userId} with same amount, skipping insert`);
-        return NextResponse.json({ 
-          success: true,
-          message: "Recent donation already processed",
-          status: payment.sp_status
-        }, { headers: { 'Content-Type': 'application/json' } });
-      }
-    } catch (checkError) {
-      console.error('[Webhook] Error checking for existing donation:', checkError);
-      // Continue with processing even if check fails
-    }
+    // Skip all the database checking for duplicates since we've already 
+    // checked our in-memory cache which is more reliable for quick successive calls
     
     // Process based on payment status
     if (payment.bank_status === 'Success' && payment.sp_code === '1000') {
