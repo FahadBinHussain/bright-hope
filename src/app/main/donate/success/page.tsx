@@ -154,32 +154,7 @@ function DonationSuccessContent() {
         return;
       }
       
-      // Check if the response content type is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Handle the case where we didn't get a JSON response
-        let responseText;
-        try {
-          responseText = await response.text();
-        } catch (textError) {
-          responseText = "Could not read response body";
-        }
-        
-        console.error('Non-JSON response received:', responseText);
-        setDebug((prev: any) => ({ 
-          ...prev, 
-          responseError: 'Non-JSON response received',
-          responseText
-        }));
-        
-        setVerificationResult({ 
-          success: false, 
-          error: 'Server returned an invalid response format. Please try again later.'
-        });
-        return;
-      }
-      
-      // Now parse the JSON, this should be safe since we've verified it's JSON
+      // Now parse the JSON response
       let responseData;
       try {
         responseData = await response.json();
