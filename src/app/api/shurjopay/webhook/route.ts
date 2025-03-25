@@ -3,10 +3,10 @@ import { verifyPayment } from "@/lib/api/shurjopay";
 import { createClient } from '@supabase/supabase-js';
 import { getPaymentMetadata, removePaymentMetadata } from "@/lib/api/payment-store";
 
-// Create Supabase client
+// Create Supabase client with service role
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function POST(req: NextRequest) {
@@ -67,19 +67,6 @@ export async function POST(req: NextRequest) {
         if (storedMetadata?.userId) {
           userId = storedMetadata.userId;
           console.log(`[Webhook] Retrieved user ID from payment store: ${userId}`);
-        } else {
-          // Check existing donations in Supabase instead of Prisma
-          console.log(`[Webhook] No metadata found, checking existing donations`);
-          const { data: existingDonation } = await supabase
-            .from('donations')
-            .select('user_id')
-            .eq('payment_intent_id', order_id)
-            .single();
-          
-          if (existingDonation?.user_id) {
-            userId = existingDonation.user_id;
-            console.log(`[Webhook] Found user ID from existing donation: ${userId}`);
-          }
         }
       } catch (lookupError) {
         console.error(`[Webhook] Error looking up payment associations:`, lookupError);
@@ -94,8 +81,42 @@ export async function POST(req: NextRequest) {
       );
     }
     
+    // First, check if we've already processed this donation
+    try {
+      // Check for recent donations with same amount (within last 5 minutes)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const { data: existingDonation } = await supabase
+        .from('donations')
+        .select('id, amount, created_at')
+        .eq('user_id', userId)
+        .eq('amount', parseFloat(payment.amount))
+        .gte('created_at', fiveMinutesAgo)
+        .order('created_at', { ascending: false })
+        .limit(1);
+        
+      console.log(`[Webhook] Checking for recent donations for user ${userId}:`, {
+        found: existingDonation && existingDonation.length > 0,
+        existingAmount: existingDonation?.[0]?.amount,
+        newAmount: parseFloat(payment.amount),
+        existingDonation: existingDonation?.[0]
+      });
+      
+      // If we already have a recent donation with this amount, just return success
+      if (existingDonation && existingDonation.length > 0) {
+        console.log(`[Webhook] Found recent donation for user ${userId} with same amount, skipping insert`);
+        return NextResponse.json({ 
+          success: true,
+          message: "Recent donation already processed",
+          status: payment.sp_status
+        }, { headers: { 'Content-Type': 'application/json' } });
+      }
+    } catch (checkError) {
+      console.error('[Webhook] Error checking for existing donation:', checkError);
+      // Continue with processing even if check fails
+    }
+    
     // Process based on payment status
-    if (payment.sp_status === 'completed') {
+    if (payment.bank_status === 'Success' && payment.sp_code === '1000') {
       console.log(`[Webhook] Processing completed payment for user: ${userId}`);
       
       // Create the donation in Supabase
@@ -104,10 +125,6 @@ export async function POST(req: NextRequest) {
           .from('donations')
           .insert({
             amount: parseFloat(payment.amount),
-            currency: 'BDT', // ShurjoPay uses BDT by default
-            status: "COMPLETED",
-            payment_intent_id: payment.order_id,
-            receipt_url: null, // ShurjoPay doesn't provide a receipt URL
             user_id: userId,
             campaign_id: campaignId || null,
             anonymous: false,
@@ -138,7 +155,7 @@ export async function POST(req: NextRequest) {
           // Get current campaign data
           const { data: campaignData, error: fetchError } = await supabase
             .from('campaigns')
-            .select('raised')
+            .select('current_amount')
             .eq('id', campaignId)
             .single();
           
@@ -147,12 +164,12 @@ export async function POST(req: NextRequest) {
           }
           
           // Update the campaign with new raised amount
-          const currentRaised = campaignData?.raised || 0;
+          const currentRaised = campaignData?.current_amount || 0;
           const newRaised = currentRaised + parseFloat(payment.amount);
           
           const { error: updateError } = await supabase
             .from('campaigns')
-            .update({ raised: newRaised })
+            .update({ current_amount: newRaised })
             .eq('id', campaignId);
           
           if (updateError) {
@@ -166,7 +183,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Clean up stored data - remove Prisma-specific cleanup
+      // Clean up stored data
       try {
         // Clean up from Redis store 
         await removePaymentMetadata(order_id);
@@ -174,37 +191,8 @@ export async function POST(req: NextRequest) {
         console.error(`[Webhook] Error cleaning up temporary data:`, cleanupError);
         // Continue processing despite cleanup errors
       }
-    } else if (payment.sp_status === 'failed') {
-      console.log(`[Webhook] Processing failed payment for user: ${userId}`);
-      // Create failed donation record in Supabase instead of Prisma
-      try {
-        const { error: supabaseError } = await supabase
-          .from('donations')
-          .insert({
-            amount: parseFloat(payment.amount),
-            currency: 'BDT',
-            status: "FAILED",
-            payment_intent_id: payment.order_id,
-            user_id: userId,
-            campaign_id: campaignId || null,
-          });
-          
-        if (supabaseError) {
-          console.error(`[Webhook] Error creating failed donation record:`, supabaseError);
-        }
-      } catch (failedError) {
-        console.error(`[Webhook] Exception creating failed donation record:`, failedError);
-      }
-
-      // Clean up stored data - remove Prisma-specific cleanup
-      try {
-        // Clean up from Redis store
-        await removePaymentMetadata(order_id);
-      } catch (cleanupError) {
-        console.error(`[Webhook] Error cleaning up temporary data:`, cleanupError);
-      }
     } else {
-      console.log(`[Webhook] Unhandled payment status: ${payment.sp_status}`);
+      console.log(`[Webhook] Unhandled or failed payment status: ${payment.sp_status}`);
     }
 
     return NextResponse.json({ 
