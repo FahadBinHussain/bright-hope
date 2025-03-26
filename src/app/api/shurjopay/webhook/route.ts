@@ -152,7 +152,8 @@ export async function POST(req: NextRequest) {
       const timeWindowSeconds = 10;
       const { isDuplicate, duplicates } = await checkForDuplicateDonation(
         userId, 
-        parseFloat(payment.amount), 
+        parseFloat(payment.amount),
+        order_id,
         timeWindowSeconds
       );
       
