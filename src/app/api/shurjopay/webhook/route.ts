@@ -72,6 +72,52 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Create an idempotency key from the request headers and order_id
+    // This helps prevent duplicate processing across serverless instances
+    const idempotencyKey = req.headers.get('x-idempotency-key') || 
+                          req.headers.get('idempotency-key') || 
+                          order_id;
+                          
+    // Check if this webhook was already processed using Supabase for state across instances
+    try {
+      const { data: processingCheck, error: processingError } = await supabase
+        .from('webhook_processing')
+        .select('status')
+        .eq('idempotency_key', idempotencyKey)
+        .single();
+      
+      if (processingCheck && processingCheck.status === 'completed') {
+        console.log(`[Webhook] Idempotency key ${idempotencyKey} already processed, skipping`);
+        return NextResponse.json({
+          success: true,
+          message: "Request already processed (idempotency check)",
+          status: "Skipped"
+        }, { headers: { 'Content-Type': 'application/json' } });
+      }
+      
+      // Create or update processing status
+      if (processingError && processingError.code === 'PGRST116') {
+        // Record doesn't exist, create it
+        await supabase
+          .from('webhook_processing')
+          .insert({
+            idempotency_key: idempotencyKey,
+            order_id: order_id,
+            status: 'processing',
+            created_at: new Date().toISOString()
+          });
+      } else {
+        // Update to processing
+        await supabase
+          .from('webhook_processing')
+          .update({ status: 'processing', updated_at: new Date().toISOString() })
+          .eq('idempotency_key', idempotencyKey);
+      }
+    } catch (idempotencyError) {
+      // If table doesn't exist or other error, continue processing
+      console.log('[Webhook] Idempotency check error, continuing with processing:', idempotencyError);
+    }
+
     console.log(`[Webhook] Processing donation with order_id: ${order_id}`);
 
     // Verify payment status
@@ -218,7 +264,8 @@ export async function POST(req: NextRequest) {
             user_id: userId,
             campaign_id: campaignId || null,
             anonymous: false,
-            message: null
+            message: null,
+            order_id: order_id
           };
           
           const { data, error } = await supabase
@@ -253,7 +300,8 @@ export async function POST(req: NextRequest) {
             p_amount: parseFloat(payment.amount),
             p_user_id: userId,
             p_campaign_id: campaignId,
-            p_anonymous: false
+            p_anonymous: false,
+            p_order_id: order_id
           });
           
           if (!error) {
@@ -286,9 +334,24 @@ export async function POST(req: NextRequest) {
       console.log(`[Webhook] Unhandled or failed payment status: ${payment.sp_status}`);
     }
 
+    // At the end of successful processing, mark as completed
+    try {
+      await supabase
+        .from('webhook_processing')
+        .update({ 
+          status: 'completed', 
+          updated_at: new Date().toISOString(),
+          completed_at: new Date().toISOString()
+        })
+        .eq('idempotency_key', idempotencyKey);
+    } catch (updateError) {
+      // Non-critical error, just log it
+      console.error('[Webhook] Error updating processing status:', updateError);
+    }
+
     return NextResponse.json({ 
       success: true,
-      message: "Payment request processed",
+      message: "Payment processed successfully",
       status: payment.sp_status
     }, { headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
