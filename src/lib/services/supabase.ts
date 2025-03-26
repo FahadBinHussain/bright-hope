@@ -56,6 +56,8 @@ export interface Donation {
   anonymous?: boolean
   message?: string
   created_at: string
+  order_id?: string
+  payment_intent_id?: string
 }
 
 export interface Volunteer {

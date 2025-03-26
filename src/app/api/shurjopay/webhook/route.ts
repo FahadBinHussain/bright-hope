@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyPayment } from "@/lib/api/shurjopay";
 import { createClient } from '@supabase/supabase-js';
 import { getPaymentMetadata, removePaymentMetadata } from "@/lib/api/payment-store";
+import { checkForDuplicateDonation } from "@/lib/api/donation-utils";
 
 // Simple in-memory cache to prevent duplicate processing
 // This will be reset when the server restarts, but it's enough
@@ -13,6 +14,50 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+// Keep track of column existence to avoid repeated checks
+let extendedColumnsExist: boolean | null = null;
+
+// Helper function to add missing columns
+async function ensureColumnsExist() {
+  try {
+    // Skip if we already know columns exist
+    if (extendedColumnsExist === true) {
+      return true;
+    }
+    
+    // Try to directly add the columns using SQL via the REST API
+    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`;
+    const response = await fetch(`${url}?apikey=${process.env.SUPABASE_SERVICE_ROLE_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+      },
+      body: JSON.stringify({
+        command: `
+          -- Add required columns
+          ALTER TABLE public.donations ADD COLUMN IF NOT EXISTS order_id TEXT;
+          ALTER TABLE public.donations ADD COLUMN IF NOT EXISTS payment_intent_id TEXT;
+        `
+      })
+    });
+    
+    // Assume it worked if we got a successful response
+    if (response.ok) {
+      console.log('[Webhook] Successfully added missing columns');
+      extendedColumnsExist = true;
+      return true;
+    }
+    
+    // Columns might already exist or we don't have permission to add them
+    console.error('[Webhook] Failed to add columns, will proceed without extended fields');
+    return false;
+  } catch (error) {
+    console.error('[Webhook] Error adding columns:', error);
+    return false;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -99,84 +144,142 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Skip all the database checking for duplicates since we've already 
-    // checked our in-memory cache which is more reliable for quick successive calls
-    
     // Process based on payment status
     if (payment.bank_status === 'Success' && payment.sp_code === '1000') {
       console.log(`[Webhook] Processing completed payment for user: ${userId}`);
       
-      // Create the donation in Supabase
+      // Check for duplicate donations within the time window
+      const timeWindowSeconds = 10;
+      const { isDuplicate, duplicates } = await checkForDuplicateDonation(
+        userId, 
+        parseFloat(payment.amount), 
+        timeWindowSeconds
+      );
+      
+      if (isDuplicate) {
+        console.log(`[Webhook] Found ${duplicates.length} recent identical donations within ${timeWindowSeconds} seconds. Skipping this one.`);
+        return NextResponse.json({
+          success: true,
+          message: `Skipped duplicate donation (found ${duplicates.length} identical donations within ${timeWindowSeconds} seconds)`,
+          status: payment.sp_status
+        }, { headers: { 'Content-Type': 'application/json' } });
+      }
+      
+      // Create the donation in Supabase - try 3 different approaches for reliability
       try {
-        const { data: donationData, error: supabaseError } = await supabase
-          .from('donations')
-          .insert({
+        // Approach 1: Try with all fields
+        try {
+          // If we don't know about column existence yet, try with all fields first
+          if (extendedColumnsExist !== false) {
+            const donationWithAllFields = {
+              amount: parseFloat(payment.amount),
+              user_id: userId,
+              campaign_id: campaignId || null,
+              anonymous: false,
+              message: null,
+              order_id: order_id,
+              payment_intent_id: transactionId
+            };
+            
+            const { data, error } = await supabase
+              .from('donations')
+              .insert(donationWithAllFields)
+              .select();
+              
+            if (!error) {
+              // It worked! Columns exist
+              extendedColumnsExist = true;
+              console.log(`[Webhook] Donation created with all fields: ${data?.[0]?.id || 'unknown'}`);
+              
+              // If donation is for a campaign, update the campaign's raised amount
+              await updateCampaignAmount(campaignId, parseFloat(payment.amount));
+              
+              // Return success
+              return NextResponse.json({ 
+                success: true,
+                message: "Payment processed successfully",
+                status: payment.sp_status
+              }, { headers: { 'Content-Type': 'application/json' } });
+            } else if (error.message.includes("order_id")) {
+              // Columns don't exist, try to add them
+              extendedColumnsExist = false;
+              await ensureColumnsExist();
+            }
+          }
+        } catch (approach1Error) {
+          console.error("[Webhook] Error in approach 1:", approach1Error);
+        }
+        
+        // Approach 2: Insert with only required fields
+        try {
+          const basicDonation = {
             amount: parseFloat(payment.amount),
             user_id: userId,
             campaign_id: campaignId || null,
             anonymous: false,
             message: null
-          })
-          .select();
-
-        if (supabaseError) {
-          console.error("[Webhook] Error storing donation in Supabase:", supabaseError);
-          return NextResponse.json(
-            { error: `Failed to store donation: ${supabaseError.message}` },
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-          );
+          };
+          
+          const { data, error } = await supabase
+            .from('donations')
+            .insert(basicDonation)
+            .select();
+            
+          if (!error) {
+            console.log(`[Webhook] Donation created with basic fields: ${data?.[0]?.id || 'unknown'}`);
+            
+            // If donation is for a campaign, update the campaign's raised amount
+            await updateCampaignAmount(campaignId, parseFloat(payment.amount));
+            
+            // Return success
+            return NextResponse.json({ 
+              success: true,
+              message: "Payment processed successfully (basic fields only)",
+              status: payment.sp_status
+            }, { headers: { 'Content-Type': 'application/json' } });
+          } else {
+            throw error;
+          }
+        } catch (approach2Error) {
+          console.error("[Webhook] Error in approach 2:", approach2Error);
         }
         
-        console.log(`[Webhook] Supabase donation created successfully: ${donationData?.[0]?.id || 'unknown'}`);
+        // Approach 3: Last resort - use RPC
+        try {
+          console.log("[Webhook] Trying RPC approach as last resort");
+          
+          const { error } = await supabase.rpc('create_donation', {
+            p_amount: parseFloat(payment.amount),
+            p_user_id: userId,
+            p_campaign_id: campaignId,
+            p_anonymous: false
+          });
+          
+          if (!error) {
+            console.log('[Webhook] Donation created via RPC function');
+            
+            // If donation is for a campaign, update the campaign's raised amount
+            await updateCampaignAmount(campaignId, parseFloat(payment.amount));
+            
+            // Return success
+            return NextResponse.json({ 
+              success: true,
+              message: "Payment processed successfully (via RPC)",
+              status: payment.sp_status
+            }, { headers: { 'Content-Type': 'application/json' } });
+          } else {
+            throw error;
+          }
+        } catch (approach3Error) {
+          console.error("[Webhook] Error in approach 3:", approach3Error);
+          throw approach3Error;
+        }
       } catch (supabaseError) {
-        console.error("[Webhook] Exception storing donation in Supabase:", supabaseError);
+        console.error("[Webhook] All donation creation approaches failed:", supabaseError);
         return NextResponse.json(
-          { error: `Exception storing donation: ${supabaseError instanceof Error ? supabaseError.message : 'Unknown error'}` },
+          { error: `Failed to store donation after multiple attempts: ${supabaseError instanceof Error ? supabaseError.message : 'Unknown error'}` },
           { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
-      }
-
-      // If donation is for a campaign, update the campaign's raised amount
-      if (campaignId) {
-        try {
-          // Get current campaign data
-          const { data: campaignData, error: fetchError } = await supabase
-            .from('campaigns')
-            .select('current_amount')
-            .eq('id', campaignId)
-            .single();
-          
-          if (fetchError) {
-            throw new Error(`Failed to fetch campaign: ${fetchError.message}`);
-          }
-          
-          // Update the campaign with new raised amount
-          const currentRaised = campaignData?.current_amount || 0;
-          const newRaised = currentRaised + parseFloat(payment.amount);
-          
-          const { error: updateError } = await supabase
-            .from('campaigns')
-            .update({ current_amount: newRaised })
-            .eq('id', campaignId);
-          
-          if (updateError) {
-            throw new Error(`Failed to update campaign: ${updateError.message}`);
-          }
-          
-          console.log(`[Webhook] Updated campaign ${campaignId} with amount ${payment.amount}, new total: ${newRaised}`);
-        } catch (updateError) {
-          console.error(`[Webhook] Error updating campaign amount:`, updateError);
-          // Continue processing despite this error
-        }
-      }
-
-      // Clean up stored data
-      try {
-        // Clean up from Redis store 
-        await removePaymentMetadata(order_id);
-      } catch (cleanupError) {
-        console.error(`[Webhook] Error cleaning up temporary data:`, cleanupError);
-        // Continue processing despite cleanup errors
       }
     } else {
       console.log(`[Webhook] Unhandled or failed payment status: ${payment.sp_status}`);
@@ -184,7 +287,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      message: "Payment processed successfully",
+      message: "Payment request processed",
       status: payment.sp_status
     }, { headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
@@ -193,5 +296,40 @@ export async function POST(req: NextRequest) {
       { error: error instanceof Error ? error.message : "Unknown error processing webhook" },
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
+  }
+}
+
+// Helper to update campaign amounts
+async function updateCampaignAmount(campaignId: string | null, amount: number) {
+  if (!campaignId) return;
+  
+  try {
+    // Get current campaign data
+    const { data: campaignData, error: fetchError } = await supabase
+      .from('campaigns')
+      .select('current_amount')
+      .eq('id', campaignId)
+      .single();
+    
+    if (fetchError) {
+      throw new Error(`Failed to fetch campaign: ${fetchError.message}`);
+    }
+    
+    // Update the campaign with new raised amount
+    const currentRaised = campaignData?.current_amount || 0;
+    const newRaised = currentRaised + amount;
+    
+    const { error: updateError } = await supabase
+      .from('campaigns')
+      .update({ current_amount: newRaised })
+      .eq('id', campaignId);
+    
+    if (updateError) {
+      throw new Error(`Failed to update campaign: ${updateError.message}`);
+    }
+    
+    console.log(`[Webhook] Updated campaign ${campaignId} with amount ${amount}, new total: ${newRaised}`);
+  } catch (updateError) {
+    console.error(`[Webhook] Error updating campaign amount:`, updateError);
   }
 } 
