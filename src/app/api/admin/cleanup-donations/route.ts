@@ -15,102 +15,133 @@ interface Donation {
   created_at: string;
 }
 
+/**
+ * Admin API to clean up duplicate donations
+ * This endpoint will:
+ * 1. Find all duplicate donations based on user_id, amount, and close timestamps
+ * 2. Keep only the earliest donation of each duplicate set
+ * 3. Add database constraints to prevent future duplicates
+ */
 export async function POST(req: NextRequest) {
   try {
-    // Get all donations
-    const { data: donations, error: fetchError } = await supabase
+    // Verify admin authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Authentication failed' }, { status: 401 });
+    }
+    
+    // Check if user has admin rights
+    const { data: userData, error: userError } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+      
+    if (userError || userData?.role !== 'admin') {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+    
+    // Step 1: Find duplicates by user, amount, and time proximity
+    // Start by finding all donations
+    const { data: allDonations, error: donationsError } = await supabase
       .from('donations')
       .select('id, user_id, amount, created_at')
-      .order('created_at', { ascending: false });
-    
-    if (fetchError) {
-      throw fetchError;
+      .order('created_at', { ascending: true });
+      
+    if (donationsError) {
+      throw new Error(`Failed to fetch donations: ${donationsError.message}`);
     }
     
-    // Group by user, amount, and date
-    console.log(`Analyzing ${donations?.length || 0} donations for duplicates...`);
+    // Group by user_id and amount, then find time-based duplicates
+    const duplicateSets: { [key: string]: Donation[] } = {};
+    const timeThresholdMs = 10 * 1000; // 10 seconds
     
-    const duplicateGroups: Donation[][] = [];
-    const processedGroups = new Map<string, Donation[]>();
-    
-    for (const donation of donations || []) {
-      // Create a key combining user, amount, and day
-      const date = new Date(donation.created_at);
-      const dayKey = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      const groupKey = `${donation.user_id}_${donation.amount}_${dayKey}`;
+    allDonations?.forEach((donation) => {
+      const key = `${donation.user_id}:${donation.amount}`;
       
-      if (!processedGroups.has(groupKey)) {
-        processedGroups.set(groupKey, []);
+      if (!duplicateSets[key]) {
+        duplicateSets[key] = [donation];
+      } else {
+        // Check if this donation is close in time to the last donation in this set
+        const lastDonation = duplicateSets[key][duplicateSets[key].length - 1];
+        const lastTime = new Date(lastDonation.created_at).getTime();
+        const currentTime = new Date(donation.created_at).getTime();
+        
+        if (currentTime - lastTime <= timeThresholdMs) {
+          // This is a duplicate
+          duplicateSets[key].push(donation);
+        } else {
+          // This is a new donation after the time threshold
+          duplicateSets[key] = [donation];
+        }
       }
-      
-      processedGroups.get(groupKey)!.push(donation);
-    }
+    });
     
-    // Find groups with more than one donation (duplicates)
-    for (const [_, group] of processedGroups.entries()) {
-      if (group.length > 1) {
-        duplicateGroups.push(group);
+    // Extract actual duplicates (entries with more than 1 donation)
+    const actualDuplicates: { [key: string]: Donation[] } = {};
+    let duplicateCount = 0;
+    
+    Object.entries(duplicateSets).forEach(([key, donations]) => {
+      if (donations.length > 1) {
+        actualDuplicates[key] = donations;
+        duplicateCount += donations.length - 1; // Count all but first as duplicates
       }
-    }
+    });
     
-    console.log(`Found ${duplicateGroups.length} groups of duplicate donations`);
-    
-    // Keep only the oldest donation in each duplicate group
-    const donationsToDelete: string[] = [];
-    const summary = [];
-    
-    for (const group of duplicateGroups) {
-      // Sort by created_at (oldest first)
-      group.sort((a: Donation, b: Donation) => 
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      );
+    // Step 2: If duplicates found, keep only the earliest of each set
+    if (duplicateCount > 0) {
+      // Collect IDs to delete (all except the first in each duplicate set)
+      const idsToDelete: string[] = [];
       
-      // Keep the first one, delete the rest
-      const toDelete = group.slice(1);
-      donationsToDelete.push(...toDelete.map((d: Donation) => d.id));
-      
-      summary.push({
-        userId: group[0].user_id,
-        amount: group[0].amount,
-        count: group.length,
-        keeping: group[0].id,
-        deleting: toDelete.map((d: Donation) => d.id)
+      Object.values(actualDuplicates).forEach(duplicates => {
+        // Sort by created_at just to be sure
+        duplicates.sort((a, b) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+        
+        // Skip the first one (keep it), mark others for deletion
+        for (let i = 1; i < duplicates.length; i++) {
+          idsToDelete.push(duplicates[i].id);
+        }
       });
       
-      console.log(`Group: ${group.length} donations of ${group[0].amount} by user ${group[0].user_id}`);
-      console.log(`  Keeping: ${group[0].id}, Deleting: ${toDelete.map((d: Donation) => d.id).join(', ')}`);
-    }
-    
-    // Delete the duplicate donations
-    const result = { 
-      groupsFound: duplicateGroups.length, 
-      donationsDeleted: 0,
-      summary 
-    };
-    
-    if (donationsToDelete.length > 0) {
-      console.log(`Deleting ${donationsToDelete.length} duplicate donations...`);
-      
-      const { error: deleteError } = await supabase
-        .from('donations')
-        .delete()
-        .in('id', donationsToDelete);
-      
-      if (deleteError) {
-        throw deleteError;
+      // Delete the duplicates
+      if (idsToDelete.length > 0) {
+        const { error: deleteError } = await supabase
+          .from('donations')
+          .delete()
+          .in('id', idsToDelete);
+          
+        if (deleteError) {
+          throw new Error(`Failed to delete duplicates: ${deleteError.message}`);
+        }
       }
-      
-      result.donationsDeleted = donationsToDelete.length;
-      console.log('Duplicate donations successfully deleted!');
-    } else {
-      console.log('No duplicates to delete.');
     }
     
-    return NextResponse.json(result);
+    // Step 3: Apply unique constraints to prevent future duplicates
+    // Call our stored procedure to add constraints
+    await supabase.rpc('add_unique_payment_constraint');
+    await supabase.rpc('add_unique_order_id_constraint');
+    
+    return NextResponse.json({
+      success: true,
+      duplicatesFound: duplicateCount,
+      duplicatesRemoved: duplicateCount,
+      message: duplicateCount > 0 
+        ? `Removed ${duplicateCount} duplicate donations` 
+        : 'No duplicates found'
+    });
   } catch (error) {
-    console.error('Error during cleanup:', error);
+    console.error('[CleanupDonations] Error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
