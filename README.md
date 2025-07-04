@@ -1,5 +1,9 @@
 # Bright Hope Charity Platform
 
+<img src="https://wakapi-qt1b.onrender.com/api/badge/fahad/interval:any/project:bright-hope" 
+     alt="Wakapi Time Tracking" 
+     title="Spent more than that amount of time spent on this project">
+
 A professional, high-class charity platform built with modern web technologies to facilitate donations, volunteer management, and impact reporting.
 
 ## 🔹 Tech Stack
