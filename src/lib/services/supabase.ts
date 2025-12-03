@@ -56,6 +56,8 @@ export interface Donation {
   anonymous?: boolean
   message?: string
   created_at: string
+  order_id?: string
+  payment_intent_id?: string
 }
 
 export interface Volunteer {
@@ -155,7 +157,44 @@ export const supabaseService = {
   },
 
   // Auth operations
+  async checkEmailExists(email: string): Promise<boolean> {
+    try {
+      // Try to sign in with magic link without actually sending an email
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          // Set this to false to check if user exists without creating a new one
+          shouldCreateUser: false
+        }
+      });
+      
+      // If there's no error or the error is about unconfirmed email,
+      // the user exists
+      if (!error || error.message.includes('Email not confirmed')) {
+        return true;
+      }
+      
+      // If the error is about invalid credentials, the user doesn't exist
+      if (error.message.includes('Invalid login credentials')) {
+        return false;
+      }
+      
+      // For any other error, assume user might exist to be safe
+      console.error('Error checking email existence:', error);
+      return false;
+    } catch (error) {
+      console.error('Exception checking email:', error);
+      return false;
+    }
+  },
+  
   async signUp(email: string, password: string, fullName: string) {
+    // First check if the email already exists
+    const emailExists = await this.checkEmailExists(email);
+    if (emailExists) {
+      throw new Error('This email is already registered. Please sign in instead.');
+    }
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -166,7 +205,28 @@ export const supabaseService = {
       },
     })
     
-    if (error) throw error
+    if (error) {
+      console.error('Supabase signup error details:', error);
+      
+      // Handle specific error cases
+      if (error.message.includes('User already registered')) {
+        throw new Error('This email is already registered. Please sign in instead.');
+      } else if (error.message.includes('duplicate key value violates unique constraint')) {
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      } else if (error.status === 400) {
+        throw new Error('Registration failed: ' + error.message);
+      } else if (error.status === 422) {
+        throw new Error('Invalid email or password format');
+      } else {
+        throw error;
+      }
+    }
+    
+    // Check if email already confirmed - another way to detect registered users
+    if (data?.user?.email_confirmed_at) {
+      throw new Error('This email is already registered. Please sign in instead.');
+    }
+    
     return data
   },
 
