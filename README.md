@@ -4,6 +4,10 @@
      alt="Wakapi Time Tracking" 
      title="Spent more than that amount of time spent on this project">
 
+## Maintenance Status
+
+This project is not actively maintained now. It remains public as a reference/portfolio project, but new features, fixes, and support are not currently planned.
+
 A professional, high-class charity platform built with modern web technologies to facilitate donations, volunteer management, and impact reporting.
 
 ## 🔹 Tech Stack
