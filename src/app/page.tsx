@@ -9,12 +9,15 @@ export const dynamic = "force-dynamic";
 
 // Server component to fetch data
 async function getData() {
-  const [campaigns, impactStats] = await Promise.all([
-    supabaseService.getCampaigns(),
-    supabaseService.getImpactStats()
-  ]);
-  
-  return { campaigns, impactStats };
+  try {
+    const [campaigns, impactStats] = await Promise.all([
+      supabaseService.getCampaigns(),
+      supabaseService.getImpactStats()
+    ]);
+    return { campaigns, impactStats };
+  } catch {
+    return { campaigns: [], impactStats: [] };
+  }
 }
 
 export default async function Home() {
