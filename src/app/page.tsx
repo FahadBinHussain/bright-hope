@@ -5,6 +5,8 @@ import MainLayout from "@/components/layout/MainLayout";
 import { Heart, Users, Calendar } from "lucide-react";
 import { supabaseService } from "@/lib/services/supabase";
 
+export const dynamic = "force-dynamic";
+
 // Server component to fetch data
 async function getData() {
   const [campaigns, impactStats] = await Promise.all([
