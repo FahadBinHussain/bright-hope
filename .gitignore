@@ -6,3 +6,6 @@
 
 # env files
 .env
+
+.env.dev
+**/.env.local
